@@ -17,7 +17,7 @@ const App = (props) =>{
 
   const {user}=props;
 
-  let [darkThemeHome,setDarkThemeHome]=useState(false);
+  let [darkThemeHome,setDarkThemeHome]=useState(true);
 
   let colors={dark:"rgb(66,66,66)",white:"white",theme:"#4b0082",black:"black"};
 
