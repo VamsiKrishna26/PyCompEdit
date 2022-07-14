@@ -1,8 +1,10 @@
+import axios from "axios";
 import moment from "moment";
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
+import configData from "../../config.json";
 
 const SubmissionDiv = styled.tr`
   .more {
@@ -10,10 +12,15 @@ const SubmissionDiv = styled.tr`
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    
   }
 `;
 
-const StyledModal = styled(Modal)``;
+const StyledModal = styled(Modal)`
+.delete{
+  border:1px solid red;
+}
+`;
 
 const StyledModalHeader = styled(Modal.Header)`
   border: ${(props) =>
@@ -65,11 +72,11 @@ const StyledDownloadButton = styled(Button)`
       : `1px solid ${props.colors.theme}`};
   :hover {
     color: ${(props) =>
-      props.$darkThemeHome ? props.colors.black : props.colors.white};
+    props.$darkThemeHome ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.white : props.colors.dark};
+    props.$darkThemeHome ? props.colors.white : props.colors.dark};
     border: ${(props) =>
-      props.$darkThemeHome ? `1px solid ${props.colors.theme}` : ""};
+    props.$darkThemeHome ? `1px solid ${props.colors.theme}` : ""};
   }
 `;
 
@@ -82,7 +89,7 @@ const language_dict = {
   "C (GCC 7.4.0)": "C",
 };
 
-const MoreModal = ({ onHide, dispatch,noOfDocuments, ...props }) => {
+const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
   const navigate = useNavigate();
 
   const showCode = () => {
@@ -104,6 +111,19 @@ const MoreModal = ({ onHide, dispatch,noOfDocuments, ...props }) => {
       },
     });
   };
+
+  const deleteSubmission = (_id) => {
+    axios.post(configData.PORT + '/deleteSubmission', {
+      submissionId: _id
+    }, {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).then(() => { window.location.reload(false); })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   return (
     <StyledModal {...props} onHide={onHide} centered>
@@ -151,19 +171,22 @@ const MoreModal = ({ onHide, dispatch,noOfDocuments, ...props }) => {
         <StyledDownloadButton {...props} onClick={editCode}>
           Edit
         </StyledDownloadButton>
+        <StyledDownloadButton className="delete" {...props} onClick={() => deleteSubmission(props.submission._id)}>
+          Delete
+        </StyledDownloadButton>
       </StyledModalBody>
     </StyledModal>
   );
 };
 
 const Submission = (props) => {
-  const { submission, index,page,noOfDocuments } = props;
+  const { submission, index, page, noOfDocuments } = props;
 
   const [showMoreModal, setShowMoreModal] = useState(false);
 
   return (
     <SubmissionDiv>
-      <td>{(page-1)*noOfDocuments+index + 1}</td>
+      <td>{(page - 1) * noOfDocuments + index + 1}</td>
       <td>{submission.fileName}</td>
       <td>{submission.language.name}</td>
       <td>{moment(submission.finished_at).calendar()}</td>

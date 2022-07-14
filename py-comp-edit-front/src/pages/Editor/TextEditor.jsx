@@ -21,7 +21,7 @@ const TextEditorDiv = styled.div`
     overflow-y: auto;
     border-radius: 15px 15px 15px 15px;
     border: ${(props) =>
-      props.$darkTheme ? "" : `1px solid ${props.colors.theme}`};
+      props.darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`};
     padding: 1em;
     font-family: ${(props) => props.fontFamily};
     font-size: ${(props) => props.fontSize};
@@ -68,7 +68,7 @@ const StyledDownloadButton = styled(Button)`
   margin-left: 0.5em;
   border: ${(props) =>
     props.$darkTheme
-      ? `1px solid ${props.colors.white}`
+      ? `1px solid ${props.colors.black}`
       : `1px solid ${props.colors.theme}`};
   :hover {
     color: ${(props) =>
@@ -394,8 +394,8 @@ const TextEditor = (props) => {
         <div className="text-editor">
           <Slate className="text-area" editor={editor} value={code}>
             <Editable
-              decorate={decorate}
-              renderLeaf={(props) => <Leaf {...props} />}
+              // decorate={decorate}
+              // renderLeaf={(props) => <Leaf {...props} />}
               onKeyDown={onKeyDown}
               placeholder="Code"
               spellCheck="false"

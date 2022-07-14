@@ -26,7 +26,7 @@ const StyledDropDownToggle = styled(Dropdown.Toggle)`
   color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)};
   background-color: ${(props) =>
     props.$darkTheme ? props.colors.dark : props.colors.white};
-  border: ${(props) => (props.$darkTheme ? "" : `1px solid ${props.colors.theme}`)};
+  border: ${(props) => (props.$darkTheme ?`1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
   :focus {
     font-family: ${(props) => props.fontFamily} !important;
     color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)} !important;

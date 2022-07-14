@@ -51,6 +51,9 @@ const StyledModalBody = styled(Modal.Body)`
       : `1px solid ${props.colors.theme}`};
   background-color: ${(props) =>
     props.$darkThemeHome ? props.colors.dark : props.colors.white};
+    font-family: ${(props) => props.font} !important;
+  color: ${(props) =>
+    props.$darkThemeHome ? props.colors.white : props.colors.black};
 
   .nav-tabs {
     display: flex;
@@ -82,9 +85,9 @@ const StyledTabs = styled(Tabs)`
   .nav-link {
     text-decoration-color: none !important;
     color: ${(props) =>
-      props.$darkThemeHome
-        ? props.colors.white
-        : props.colors.black} !important;
+    props.$darkThemeHome
+      ? props.colors.white
+      : props.colors.black} !important;
   }
 
   .nav-link.active {
@@ -98,10 +101,10 @@ const NavbarDiv = styled.div`
   .navbar-div {
     min-height: 60px;
     background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.dark : props.colors.theme};
+    props.$darkThemeHome ? props.colors.dark : props.colors.theme};
     font-family: ${(props) => props.font} !important;
     color: ${(props) =>
-      props.$darkThemeHome ? props.colors.white : props.colors.white};
+    props.$darkThemeHome ? props.colors.white : props.colors.white};
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -126,6 +129,7 @@ const LogRegModal = ({
   fetchLogin,
   fetchRegister,
   successMessage,
+  showMessage,
   ...props
 }) => {
   return (
@@ -134,6 +138,9 @@ const LogRegModal = ({
         <StyledModalTitle {...props}>Login/Register</StyledModalTitle>
       </StyledModalHeader>
       <StyledModalBody {...props}>
+        {
+          showMessage ? <p>Please login or register before you access the page</p> : null
+        }
         <LogRegTabs
           loginForm={loginForm}
           setLoginForm={setLoginForm}
@@ -245,14 +252,6 @@ const defaultRegisterForm = {
 };
 
 const Navbar = (props) => {
-  const [showLogReg, setShowLogReg] = useState(false);
-
-  const [tabKey, setTabKey] = useState("login");
-
-  const [loginForm, setLoginForm] = useState(defaultLoginForm);
-
-  const [registerForm, setRegisterForm] = useState(defaultRegisterForm);
-
   const {
     user,
     successMessage,
@@ -262,8 +261,20 @@ const Navbar = (props) => {
     isFetching,
     fetchRegister,
     clearSuccessFailure,
+    hideNavbar,
+    showModal,
+    showMessage,
     logout
   } = props;
+
+  const [showLogReg, setShowLogReg] = useState(showModal);
+
+  const [tabKey, setTabKey] = useState("login");
+
+  const [loginForm, setLoginForm] = useState(defaultLoginForm);
+
+  const [registerForm, setRegisterForm] = useState(defaultRegisterForm);
+
 
   // useEffect(() => {
   //   console.log(user, successMessage, failureMessage, isFetchingLogin);
@@ -280,9 +291,9 @@ const Navbar = (props) => {
     }
   }, [successMessage]);
 
-  useEffect(()=>{
-    if(user) setShowLogReg(false);
-  },[user])
+  useEffect(() => {
+    if (user) setShowLogReg(false);
+  }, [user])
 
   useEffect(() => {
     clearSuccessFailure();
@@ -296,41 +307,46 @@ const Navbar = (props) => {
 
   return (
     <NavbarDiv {...props}>
-      <div className="navbar-div">
-        {!user ? (
-          <span className="navbar-item" onClick={() => setShowLogReg(true)}>
-            Login/Register
-          </span>
-        ) : null}
-        {user ? (
-          <span className="navbar-item">
-            Welcome {user.name}
-          </span>
-        ) : null}
-        {user ? (
-          <span className="navbar-item" onClick={() => logout()}>
-            Logout
-          </span>
-        ) : null}
-        {!user? (
-          <LogRegModal
-            colors={props.colors}
-            font_sizes={props.font_sizes}
-            show={showLogReg ? 1 : 0}
-            $darkThemeHome={props.$darkThemeHome}
-            onHide={() => setShowLogReg(false)}
-            tabKey={tabKey}
-            setTabKey={setTabKey}
-            loginForm={loginForm}
-            setLoginForm={setLoginForm}
-            registerForm={registerForm}
-            setRegisterForm={setRegisterForm}
-            fetchLogin={fetchLogin}
-            fetchRegister={fetchRegister}
-            successMessage={successMessage}
-          />
-        ) : null}
-      </div>
+      {
+        !hideNavbar ?
+          <div className="navbar-div">
+            {!user ? (
+              <span className="navbar-item" onClick={() => setShowLogReg(true)}>
+                Login/Register
+              </span>
+            ) : null}
+            {user ? (
+              <span className="navbar-item">
+                Welcome {user.name}
+              </span>
+            ) : null}
+            {user ? (
+              <span className="navbar-item" onClick={() => logout()}>
+                Logout
+              </span>
+            ) : null}
+          </div> :
+          null
+      }
+      {!user ? (
+        <LogRegModal
+          colors={props.colors}
+          font_sizes={props.font_sizes}
+          show={showLogReg ? 1 : 0}
+          $darkThemeHome={props.$darkThemeHome}
+          onHide={() => setShowLogReg(false)}
+          tabKey={tabKey}
+          setTabKey={setTabKey}
+          loginForm={loginForm}
+          setLoginForm={setLoginForm}
+          registerForm={registerForm}
+          setRegisterForm={setRegisterForm}
+          fetchLogin={fetchLogin}
+          fetchRegister={fetchRegister}
+          successMessage={successMessage}
+          showMessage={showMessage}
+        />
+      ) : null}
     </NavbarDiv>
   );
 };
@@ -347,7 +363,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchLogin: (state) => dispatch(fetchLogin(state)),
   fetchRegister: (state) => dispatch(fetchRegister(state)),
   clearSuccessFailure: () => dispatch(clearSuccessFailure()),
-  logout:()=>dispatch(logout())
+  logout: () => dispatch(logout())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

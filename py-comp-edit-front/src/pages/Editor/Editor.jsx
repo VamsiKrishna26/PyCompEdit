@@ -113,14 +113,14 @@ const StyledDownloadButton = styled(Button)`
     props.$darkTheme ? props.colors.dark : props.colors.white};
   margin-left: 0.5em;
   border: ${(props) =>
-    props.$darkTheme ? "" : `1px solid ${props.colors.theme}`};
+    props.$darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`};
   :hover {
     color: ${(props) =>
       props.$darkTheme ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
       props.$darkTheme ? props.colors.white : props.colors.dark};
     border: ${(props) =>
-      props.$darkTheme ? `1px solid ${props.colors.theme}` : ""};
+      props.$darkTheme ? `1px solid ${props.colors.theme}` : `1px solid ${props.colors.black}`};
   }
 `;
 
