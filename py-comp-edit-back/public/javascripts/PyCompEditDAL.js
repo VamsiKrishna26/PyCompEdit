@@ -49,15 +49,15 @@ PyCompEditDAL.submit = async function (userId, fileName, notes, source_code, std
             });
             console.log(token);
             let response = await axios.get('https://judge0-ce.p.rapidapi.com/submissions/' + token, {
-                    params: {
-                        base64_encoded: 'true',
-                        fields: '*'
-                    },
-                    headers: {
-                        'X-RapidAPI-Key': 'ae615435a2msh56d6b3d25e5d1c6p11491ajsnbefe4ccd3acb',
-                        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
-                    }
-                })
+                params: {
+                    base64_encoded: 'true',
+                    fields: '*'
+                },
+                headers: {
+                    'X-RapidAPI-Key': 'ae615435a2msh56d6b3d25e5d1c6p11491ajsnbefe4ccd3acb',
+                    'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+                }
+            })
                 .then(response => response.data)
                 .catch(function (error) {
                     console.log(error);
@@ -152,54 +152,117 @@ PyCompEditDAL.login = async function (email, password) {
     })
 }
 
-PyCompEditDAL.submissions = async function (userId,sort,page,noOfDocuments) {
-    if(sort){
-        sort[ObjectId]=1;
+PyCompEditDAL.submissions = async function (userId, sort, page, noOfDocuments) {
+    if (sort) {
+        sort[ObjectId] = 1;
     }
-    else{
-        sort={};
-        sort[ObjectId]=1;
+    else {
+        sort = {};
+        sort[ObjectId] = 1;
     }
-    page=page?page:0;
-    noOfDocuments=noOfDocuments?noOfDocuments:0;
+    page = page ? page : 1;
+    noOfDocuments = noOfDocuments ? noOfDocuments : 10;
     return connection.getConnection().then(async function (db) {
         return db.collection("Submissions")
             .aggregate([
                 {
-                    $match:{
-                        userId:userId
+                    $match: {
+                        userId: userId
                     }
                 },
                 {
                     $sort: sort
                 },
                 {
-                    $skip:(page-1)*noOfDocuments
+                    $skip: (page - 1) * noOfDocuments
                 },
                 {
-                    $limit:noOfDocuments?noOfDocuments:Number.MAX_SAFE_INTEGER
+                    $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER
                 }
             ],
-            {
-                collation: {
-                    locale : "en"
-                }
-            })
-            
+                {
+                    collation: {
+                        locale: "en"
+                    }
+                })
+
             .toArray()
     })
 }
 
-PyCompEditDAL.noOfPages=async function(noOfDocuments){
-    noOfDocuments=!noOfDocuments?5:noOfDocuments;
-    return connection.getConnection().then(async function(db){
-        let documents=await db.collection("Submissions").countDocuments();
-        return Math.ceil(documents/noOfDocuments);
+PyCompEditDAL.noOfPages = async function (noOfDocuments) {
+    noOfDocuments = !noOfDocuments ? 5 : noOfDocuments;
+    return connection.getConnection().then(async function (db) {
+        let documents = await db.collection("Submissions").countDocuments();
+        return Math.ceil(documents / noOfDocuments);
+    })
+}
+
+PyCompEditDAL.deleteSubmission = async function (submissionId) {
+    return connection.getConnection().then(async function (db) {
+        try {
+            await db.collection("Submissions").deleteOne({ "_id": ObjectId(submissionId) });
+            return "Deletion successful"
+        }
+        catch {
+            throw new Error("Submission ID not present");
+        }
+
+    })
+}
+
+PyCompEditDAL.discussions = async function (sort, page, noOfDocuments) {
+    if (sort) {
+        sort[ObjectId] = 1;
+    }
+    else {
+        sort = {};
+        sort[ObjectId] = 1;
+    }
+    page = page ? page : 1;
+    noOfDocuments = noOfDocuments ? noOfDocuments : 10;
+    return connection.getConnection().then(async function (db) {
+        return db.collection("Discussions")
+            .aggregate([
+                {
+                    $sort: sort
+                },
+                {
+                    $skip: (page - 1) * noOfDocuments
+                },
+                {
+                    $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        userId: 1,
+                        Score: 1,
+                        CreationDate: 1,
+                        Title: 1,
+                        Views: 1,
+                    }
+                }
+            ],
+                {
+                    collation: {
+                        locale: "en"
+                    }
+                })
+            .toArray()
+    })
+}
+
+PyCompEditDAL.noOfPages1 = async function (noOfDocuments) {
+    noOfDocuments = !noOfDocuments ? 10 : noOfDocuments;
+    return connection.getConnection().then(async function (db) {
+        let documents = await db.collection("Discussions").countDocuments();
+        return Math.ceil(documents / noOfDocuments);
     })
 }
 
 PyCompEditDAL.verifyJWT = async function (req, res, next) {
-    const token = req.headers["x-access-token"] ?.split(' ')[1];
+    const token = req.headers["x-access-token"]?.split(' ')[1];
     if (token) {
         jwt.verify(token, process.env.JWT_KEY, async (err, decoded) => {
             if (err) {
@@ -220,6 +283,49 @@ PyCompEditDAL.verifyJWT = async function (req, res, next) {
             message: "Incorrect Token"
         })
     }
+}
+
+PyCompEditDAL.localOperations = async function () {
+    return connection.getConnection().then(async function (db) {
+        try {
+            // // let response = await db.collection("Answers").aggregate([{ "$group": { "_id": "$ParentId", count: { $sum: 1 } } }, { $sort: { count: -1 } }, 
+            // // { "$project": { "ParentId": "$_id", "_id": 0 } }, { $limit: 500 }], { "allowDiskUse": true }).toArray();
+            // // let list1=[]
+            // // for (var i=0;i<response.length;i++){
+            // //     list1.push(response[i]["ParentId"]);
+            // // }
+            // // let questions= (await db.collection("Questions").deleteMany({"Id":{$nin:list1}}).toArray()).length
+            // let dict1 = {}
+            // let list1=[]
+            // let questionIds = await db.collection("Questions").find({}, { projection: { "Id": 1, _id: 0 } }).toArray();
+            // for (var i = 0; i < questionIds.length; i++) {
+            //     list1.push(questionIds[i]["Id"]);
+            // }
+            // let answers=await db.collection("Answers").find({}).toArray()
+            // for (var i=0;i<answers.length;i++){
+            //     if(Object.keys(dict1).includes(answers[i]["ParentId"])){
+            //         dict1[answers[i]["ParentId"]].push(answers[i])
+            //     }
+            //     else{
+            //         dict1[answers[i]["ParentId"]]=[answers[i]]
+            //     }
+            // }
+            // let keys=Object.keys(dict1);
+            // for(var i=0;i<keys.length;i++){
+            //     await db.collection("Questions").updateMany({"Id":keys[i]},{$set:{"Answers":dict1[keys[i]]}})
+            // }
+            // db.collection("Questions").find({}).forEach(async function(doc){
+            //     await db.collection("Questions").updateOne({_id:doc._id},{$set:{"Views":Math.floor(Math.random()*1001)}});
+            // })
+            // db.collection("Questions").updateMany({},{$rename:{"OwnerUserId":"userId"}})
+
+            return "Success"
+        }
+        catch {
+
+            throw new Error("Submission ID not present");
+        }
+    })
 }
 
 module.exports = PyCompEditDAL;

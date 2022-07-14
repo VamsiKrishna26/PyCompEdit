@@ -2,6 +2,7 @@ var connection={};
 
 var MongoClient=require('mongodb').MongoClient;
 var dbUrl="mongodb+srv://VAMSI:buhm2VXyk@cluster0.ewjb8.mongodb.net/PyCompEdit?retryWrites=true&w=majority";
+// var dbUrl="mongodb://localhost:27017/PyCompEdit";
 
 var mongoClient=MongoClient.connect(dbUrl);
 

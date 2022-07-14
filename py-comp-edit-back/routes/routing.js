@@ -55,4 +55,36 @@ routing.post('/pages',function(req,res,next){
     })
 })
 
+routing.post('/deleteSubmission',function(req,res,next){
+    PyCompEditDAL.deleteSubmission(req.body.submissionId).then((response)=>{
+        res.json(response);
+    }).catch(function (err) {
+        res.status(400).json({ message: err.message });
+    })
+})
+
+routing.post('/discussions',function(req,res,next){
+    PyCompEditDAL.discussions(req.body.sort,req.body.page,req.body.noOfDocuments).then((response)=>{
+        res.json(response);
+    }).catch(function (err) {
+        res.status(400).json({ message: err.message });
+    })
+})
+
+routing.post('/pages1',function(req,res,next){
+    PyCompEditDAL.noOfPages1(req.body.noOfDocuments).then((response)=>{
+        res.json(response);
+    }).catch(function (err) {
+        res.status(400).json({ message: err.message });
+    })
+})
+
+routing.get('/local',function(req,res,next){
+    PyCompEditDAL.localOperations().then((response)=>{
+        res.json(response);
+    }).catch(function (err) {
+        res.status(400).json({ message: err.message });
+    })
+})
+
 module.exports=routing;
