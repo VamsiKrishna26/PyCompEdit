@@ -40,7 +40,7 @@ const SortBar = (props) => {
     const sorts = {
       Default: { _id: sortOrder },
       "Last Created": { CreationDate: sortOrder },
-      UpVotes: { Score: sortOrder },
+      Likes: { Score: sortOrder },
       Views: { Views: sortOrder },
     };
   

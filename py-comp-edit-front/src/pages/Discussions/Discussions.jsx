@@ -7,12 +7,16 @@ import { Dropdown } from "react-bootstrap";
 import { connect } from "react-redux";
 import SortBar from "./SortBar";
 import PaginationComp from "./Pagination";
+import Discussion from "./Discussion";
 
 const DiscussionsDiv = styled.div`
   margin: 1em;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+
+  .discussion {
+  }
 
   .documents {
     margin: 1em;
@@ -30,7 +34,9 @@ const StyledDropDownToggle = styled(Dropdown.Toggle)`
   background-color: ${(props) =>
     props.$darkThemeHome ? props.colors.dark : props.colors.white};
   border: ${(props) =>
-    props.$darkThemeHome ? "" : `1px solid ${props.colors.theme}`};
+    props.$darkThemeHome
+      ? `1px solid ${props.colors.black}`
+      : `1px solid ${props.colors.theme}`};
   :focus {
     font-family: ${(props) => props.font} !important;
     color: ${(props) =>
@@ -167,6 +173,22 @@ const Discussions = (props) => {
           setSort={setSort}
           {...props}
         />
+      </div>
+      <div className="discussion">
+        {discussions.map((item, i) => (
+          <Discussion
+            key={i}
+            index={i}
+            discussion={item}
+            colors={colors}
+            font={font}
+            font_sizes={font_sizes}
+            $darkThemeHome={$darkThemeHome}
+            page={page}
+            noOfDocuments={noOfDocuments}
+            {...props}
+          ></Discussion>
+        ))}
       </div>
       <div className="pagination">
         <PaginationComp
