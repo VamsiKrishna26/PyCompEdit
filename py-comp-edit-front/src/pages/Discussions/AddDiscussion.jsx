@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import AddDiscussionInput from "./AddDiscussionInput";
 
 const AddDiscussionDiv = styled.div`
   display: flex;
@@ -46,7 +47,7 @@ const AddDiscussion = (props) => {
       font_sizes={font_sizes}
     >
       <div className="title">
-        <div className="title-heading">Title</div>
+        <div className="title-heading">Title:</div>
         <input
           // onBlur={onFileNameChange}
           className="title-input"
@@ -56,6 +57,8 @@ const AddDiscussion = (props) => {
           placeholder="Title..."
           // defaultValue={fileName}
         />
+        <div className="title-heading">Add Discussion:</div>
+        <AddDiscussionInput/>
       </div>
     </AddDiscussionDiv>
   );
