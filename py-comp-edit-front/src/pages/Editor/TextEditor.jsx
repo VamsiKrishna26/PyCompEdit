@@ -83,13 +83,12 @@ Prism.languages.insertBefore("python", "prolog", {
   comment: { pattern: /##[^\n]*/, alias: "comment" },
 });
 
+Prism.languages.javascript = Prism.languages.extend("javascript", {});
 Prism.languages.java = Prism.languages.extend("java", {});
-Prism.languages.java = Prism.languages.extend("javascript", {});
-Prism.languages.java = Prism.languages.extend("java", {});
-Prism.languages.java = Prism.languages.extend("sql", {});
-Prism.languages.java = Prism.languages.extend("csharp", {});
-Prism.languages.java = Prism.languages.extend("cpp", {});
-Prism.languages.java = Prism.languages.extend("c", {});
+Prism.languages.sql = Prism.languages.extend("sql", {});
+Prism.languages.csharp = Prism.languages.extend("csharp", {});
+Prism.languages.cpp = Prism.languages.extend("cpp", {});
+Prism.languages.c = Prism.languages.extend("c", {});
 
 const TextEditor = (props) => {
   const {
@@ -394,8 +393,8 @@ const TextEditor = (props) => {
         <div className="text-editor">
           <Slate className="text-area" editor={editor} value={code}>
             <Editable
-              // decorate={decorate}
-              // renderLeaf={(props) => <Leaf {...props} />}
+              decorate={decorate}
+              renderLeaf={(props) => <Leaf {...props} />}
               onKeyDown={onKeyDown}
               placeholder="Code"
               spellCheck="false"

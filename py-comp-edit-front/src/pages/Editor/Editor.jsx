@@ -22,7 +22,6 @@ const EditorDiv = styled.div`
     width: auto;
 
     .editor {
-      margin: 1em;
       position: relative;
       display: flex;
       flex-direction: column;

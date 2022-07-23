@@ -32,7 +32,6 @@ const InputsDiv = styled.div`
 
   .stdin_file-name {
     border-radius: 15px 15px 15px 15px;
-    
     border: ${(props) => (props.darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
     padding: 1em;
     background-color: ${(props) =>

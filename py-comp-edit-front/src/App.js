@@ -9,12 +9,15 @@ import { connect } from "react-redux";
 import { Route, Routes } from "react-router";
 import Submissions from "./pages/Submissions/Submissions";
 import Discussions from "./pages/Discussions/Discussions";
+import Discussion from "./pages/Discussion/Discussion";
+import AddDiscussion from "./pages/Discussions/AddDiscussion";
 
 const AppDiv = styled.div`
 
   .body{
     background-color: ${(props) =>
     props.$darkThemeHome ? props.colors.dark_bg : props.colors.white};
+    padding: 1em;
   }
 
 `;
@@ -33,15 +36,20 @@ const App = (props) => {
 
   return (
     <AppDiv $darkThemeHome={darkThemeHome} colors={colors}>
+      <Navbar hideNavbar={false} showMessage={false} showModal={false} $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} />
       <div className="body">
-        <Navbar hideNavbar={false} showMessage={false} showModal={false} $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} />
         <Routes>
           <Route path="/editor" element={<Editor $darkThemeHome={darkThemeHome} colors={colors} {...props} />} />
           {
             <Route path="/submissions" element={user ? <Submissions $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} /> 
             : <Navbar hideNavbar={true} showMessage={true} showModal={true} $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} />} />
           }
+          <Route path='/discussions/:discussionId' element={<Discussion $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props}/>}/>
           <Route path='/discussions' element={<Discussions $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props}/>}/>
+          {
+            <Route path="/discussions/addDiscussion" element={user ? <AddDiscussion $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} /> 
+            : <Navbar hideNavbar={true} showMessage={true} showModal={true} $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} />} />
+          }
           <Route path="/" element={<p>Hello</p>} />
         </Routes>
       </div>

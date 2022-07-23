@@ -15,7 +15,6 @@ import { connect } from "react-redux";
 import Filters from "./Filters";
 
 const SubmissionsDiv = styled.div`
-  margin: 1em;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

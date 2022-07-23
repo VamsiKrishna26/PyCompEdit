@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import configData from "../../config.json";
-import { Dropdown } from "react-bootstrap";
-import { connect } from "react-redux";
+import { Button,Dropdown } from "react-bootstrap";
 import SortBar from "./SortBar";
 import PaginationComp from "./Pagination";
 import Discussion from "./Discussion";
-
 const DiscussionsDiv = styled.div`
-  margin: 1em;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -25,6 +21,12 @@ const DiscussionsDiv = styled.div`
   .pagination {
     margin: 1em;
     align-self: center;
+  }
+
+  .add-discussion{
+    display:flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 `;
 const StyledDropDownToggle = styled(Dropdown.Toggle)`
@@ -50,7 +52,7 @@ const StyledDropDownToggle = styled(Dropdown.Toggle)`
     color: ${(props) =>
       props.$darkThemeHome ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.white : props.colors.dark};
+      props.$darkThemeHome ? props.colors.white : props.colors.black};
   }
 `;
 
@@ -66,6 +68,25 @@ const StyledDropDownItem = styled(Dropdown.Item)`
     props.$darkThemeHome ? props.colors.dark : props.colors.white};
 `;
 
+const StyledButton = styled(Button)`
+  font-family: ${(props) => props.fontFamily};
+  color: ${(props) =>
+    props.$darkTheme ? props.colors.white : props.colors.black};
+  background-color: ${(props) =>
+    props.$darkTheme ? props.colors.dark : props.colors.white};
+  margin: 0.5em;
+  border: ${(props) =>
+    props.$darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`};
+  :hover {
+    color: ${(props) =>
+      props.$darkTheme ? props.colors.black : props.colors.white};
+    background-color: ${(props) =>
+      props.$darkTheme ? props.colors.white : props.colors.dark};
+    border: ${(props) =>
+      props.$darkTheme ? `1px solid ${props.colors.theme}` : `1px solid ${props.colors.black}`};
+  }
+`;
+
 const Discussions = (props) => {
   const [sort, setSort] = useState({ finished_at: -1 });
 
@@ -78,8 +99,6 @@ const Discussions = (props) => {
   const [key, setKey] = useState("Last Created");
 
   const [pages, setPages] = useState(1);
-
-  const navigate = useNavigate();
 
   const { colors, font, font_sizes, $darkThemeHome } = props;
 
@@ -158,6 +177,8 @@ const Discussions = (props) => {
     return documentsList;
   };
 
+  
+
   return (
     <DiscussionsDiv
       colors={colors}
@@ -165,6 +186,9 @@ const Discussions = (props) => {
       font_sizes={font_sizes}
       $darkThemeHome={$darkThemeHome}
     >
+      <div className="add-discussion">
+        <StyledButton fontFamily={font} $darkTheme={$darkThemeHome} colors={colors}>Add a discussion</StyledButton>
+      </div>
       <div className="sort-bar">
         <SortBar
           keyprop={key}
