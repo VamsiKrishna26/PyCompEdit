@@ -317,8 +317,12 @@ PyCompEditDAL.noOfPages1 = async function (noOfDocuments) {
 };
 
 PyCompEditDAL.getDiscussionById = async function (_id) {
-  return connection.getConnection().then(function (db) {
-    return db.collection("Discussions").findOne({ _id: ObjectId(_id) });
+  return connection.getConnection().then(async function (db) {
+    let discussion=await db.collection("Discussions").findOne({ _id: ObjectId(_id) });
+    if(!discussion){
+      throw new Error("Discussion ID not present");
+    }
+    return discussion
   });
 };
 
