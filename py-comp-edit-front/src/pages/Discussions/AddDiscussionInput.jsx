@@ -1,25 +1,38 @@
-import React, { useCallback, useMemo } from 'react'
-import isHotkey from 'is-hotkey'
-import { Editable, withReact, useSlate, Slate } from 'slate-react'
-import {
-  Editor,
-  Transforms,
-  createEditor,
-  Descendant,
-  Element as SlateElement,
-} from 'slate'
-import { withHistory } from 'slate-history';
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { EditorState, convertToRaw } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import draftToHtml from "draftjs-to-html";
+import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
+const AddDiscussionInputDiv = styled.div`
+  .editor {
+    .demo-wrapper {
+      border: 1px solid red;
+    }
+  }
+`;
 
-const AddDiscussionInputDiv=styled.div``;
+const AddDiscussionInput = (props) => {
+  const [text, setText] = useState(EditorState.createEmpty());
 
-const AddDiscussionInput=(props)=>{
-    return(
-        <AddDiscussionInputDiv>
+  useEffect(() => {
+    console.log(draftToHtml(convertToRaw(text.getCurrentContent())));
+  }, [text]);
 
-        </AddDiscussionInputDiv>
-    )
-}
+  return (
+    <AddDiscussionInputDiv>
+      <div className="editor">
+        <Editor
+          editorState={text}
+          onEditorStateChange={(text) => setText(text)}
+          wrapperClassName="demo-wrapper"
+          editorClassName="demo-editor"
+          spellCheck="false"
+        />
+      </div>
+    </AddDiscussionInputDiv>
+  );
+};
 
 export default AddDiscussionInput;

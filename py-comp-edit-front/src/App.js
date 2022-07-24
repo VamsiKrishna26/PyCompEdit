@@ -18,6 +18,7 @@ const AppDiv = styled.div`
     background-color: ${(props) =>
     props.$darkThemeHome ? props.colors.dark_bg : props.colors.white};
     padding: 1em;
+    min-height: 100vh;
   }
 
 `;
@@ -26,7 +27,7 @@ const App = (props) => {
 
   const { user } = props;
 
-  let [darkThemeHome, setDarkThemeHome] = useState(false);
+  let [darkThemeHome, setDarkThemeHome] = useState(true);
 
   let colors = { dark: "rgb(66,66,66)", white: "white", theme: "#4b0082", black: "black", dark_bg: "rgb(128, 128, 128)" };
 

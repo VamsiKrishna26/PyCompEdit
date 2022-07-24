@@ -30,8 +30,8 @@ const DiscussionBodyDiv = styled.div`
 `;
 
 const DiscussionBody = (props) => {
-  const { discussionBody } = props;
-  //   console.log(discussionBody);
+  var { discussionBody } = props;
+    console.log(discussionBody);
 
   useEffect(() => {
     props.$darkThemeHome
