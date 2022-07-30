@@ -5,7 +5,7 @@ import { Editor } from "react-draft-wysiwyg";
 import draftToHtml from "draftjs-to-html";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-const AddDiscussionInputDiv = styled.div`
+const AddAnswerInputDiv = styled.div`
   .editor {
     margin: 0.5em;
     .demo-wrapper {
@@ -20,21 +20,22 @@ const AddDiscussionInputDiv = styled.div`
          props.colors.white};
         border-radius: 15px 15px 15px 15px;
         padding: 1em;
+      font-size: 14px;
     }
   }
 `;
 
-const AddDiscussionInput = (props) => {
+const AddAnswerInput = (props) => {
   const [text, setText] = useState(EditorState.createEmpty());
 
-  const { colors, font, font_sizes, $darkThemeHome,setDiscussionBody } = props;
+  const { colors, font, font_sizes, $darkThemeHome,setAnswerBody } = props;
 
   useEffect(() => {
-    setDiscussionBody(draftToHtml(convertToRaw(text.getCurrentContent())).replace(/<br>/g,'\n'),"text/html");
+    setAnswerBody(draftToHtml(convertToRaw(text.getCurrentContent())).replace(/<br>/g,'\n'),"text/html");
   }, [text]);
 
   return (
-    <AddDiscussionInputDiv
+    <AddAnswerInputDiv
       darkTheme={$darkThemeHome}
       fontFamily={font}
       colors={colors}
@@ -49,8 +50,8 @@ const AddDiscussionInput = (props) => {
           spellCheck="false"
         />
       </div>
-    </AddDiscussionInputDiv>
+    </AddAnswerInputDiv>
   );
 };
 
-export default AddDiscussionInput;
+export default AddAnswerInput;

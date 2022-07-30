@@ -10,6 +10,7 @@ import { Dropdown, Table } from "react-bootstrap";
 import PaginationComp from "./Pagination";
 import SortBar from "./SortBar";
 import Submission from "./Submission";
+import SubmissionMobile from "./SubmissionMobile";
 import { selectUser } from "../../redux/user/user.selecter";
 import { connect } from "react-redux";
 import Filters from "./Filters";
@@ -45,7 +46,9 @@ const StyledDropDownToggle = styled(Dropdown.Toggle)`
   background-color: ${(props) =>
     props.$darkThemeHome ? props.colors.dark : props.colors.white};
   border: ${(props) =>
-    props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`};
+    props.$darkThemeHome
+      ? `1px solid ${props.colors.black}`
+      : `1px solid ${props.colors.theme}`};
   :focus {
     font-family: ${(props) => props.font} !important;
     color: ${(props) =>
@@ -162,6 +165,7 @@ const Submissions = (props) => {
         configData.PORT + "/pages",
         {
           noOfDocuments: noOfDocuments,
+          userId: user.userId,
         },
         {
           headers: {
@@ -217,41 +221,56 @@ const Submissions = (props) => {
         />
       </div>
       <div className="table-filter">
-        <Filters/>
-        <StyledTable
-          responsive
-          bordered
-          font={font}
-          $darkThemeHome={$darkThemeHome}
-          colors={colors}
-        >
-          <thead>
-            <tr>
-              <th style={{ width: "5%" }}>S.No</th>
-              <th style={{ width: "25%" }}>File Name</th>
-              <th style={{ width: "20%" }}>Language</th>
-              <th style={{ width: "20%" }}>Last Submission</th>
-              <th style={{ width: "20%" }}>Status</th>
-              <th style={{ width: "10%" }}>More</th>
-            </tr>
-          </thead>
-          <tbody>
-            {submissions.map((item, i) => (
-              <Submission
-                key={i}
-                index={i}
-                submission={item}
-                colors={colors}
-                font={font}
-                font_sizes={font_sizes}
-                $darkThemeHome={$darkThemeHome}
-                page={page}
-                noOfDocuments={noOfDocuments}
-                {...props}
-              />
-            ))}
-          </tbody>
-        </StyledTable>
+        <Filters />
+        {window.screen.width >= 768 ? (
+          <StyledTable
+            responsive
+            bordered
+            font={font}
+            $darkThemeHome={$darkThemeHome}
+            colors={colors}
+          >
+            <thead>
+              <tr>
+                <th style={{ width: "5%" }}>S.No</th>
+                <th style={{ width: "25%" }}>File Name</th>
+                <th style={{ width: "20%" }}>Language</th>
+                <th style={{ width: "20%" }}>Last Submission</th>
+                <th style={{ width: "20%" }}>Status</th>
+                <th style={{ width: "10%" }}>More</th>
+              </tr>
+            </thead>
+            <tbody>
+              {submissions.map((item, i) => (
+                <Submission
+                  key={i}
+                  index={i}
+                  submission={item}
+                  colors={colors}
+                  font={font}
+                  font_sizes={font_sizes}
+                  $darkThemeHome={$darkThemeHome}
+                  page={page}
+                  noOfDocuments={noOfDocuments}
+                  {...props}
+                />
+              ))}
+            </tbody>
+          </StyledTable>
+        ) : (
+          submissions.map((item, i) => (
+            <SubmissionMobile
+              key={i}
+              index={i}
+              submission={item}
+              colors={colors}
+              font={font}
+              font_sizes={font_sizes}
+              $darkThemeHome={$darkThemeHome}
+              {...props}
+            />
+          ))
+        )}
       </div>
       <div className="pagination">
         <PaginationComp

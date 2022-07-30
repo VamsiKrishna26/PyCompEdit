@@ -41,6 +41,32 @@ export const fetchLogin = (form) => {
     }
 }
 
+export const addDiscussion_dispatch=(user)=>({
+    type:UserActionTypes.ADD_DISCUSSION,
+    payload:user
+})
+
+export const addDiscussion=(user,discussionId)=>{
+    return dispatch=>{
+        user={...user,discussions:[...user.discussions,discussionId]};
+        localStorage.setItem('user', JSON.stringify(user));
+        dispatch(addDiscussion_dispatch(user));
+    }
+}
+
+export const addAnswer_dispatch=(user)=>({
+    type:UserActionTypes.ADD_ANSWER,
+    payload:user
+})
+
+export const addAnswer=(user,object)=>{
+    return dispatch=>{
+        user={...user,answers:[...user.answers,object]};
+        localStorage.setItem('user', JSON.stringify(user));
+        dispatch(addAnswer_dispatch(user));
+    }
+}
+
 export const logout_dispatch = () => ({
     type: UserActionTypes.LOGOUT
 })

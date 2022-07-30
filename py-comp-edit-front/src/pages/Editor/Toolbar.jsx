@@ -63,6 +63,7 @@ const Toolbar = (props) => {
     changeFontFamily,
     language,
     changeLanguage,
+    submission
   } = props;
 
   const font_families_list = [
@@ -84,7 +85,7 @@ const Toolbar = (props) => {
     Python: "Python",
     Java: "Java",
     JavaScript: "JavaScript",
-    CSharp: "C#",
+    CSharp: "CSharp",
     Cpp: "C++",
     C: "C",
   };
@@ -176,6 +177,7 @@ const Toolbar = (props) => {
               fontFamily={fontFamily}
               $darkTheme={darkTheme}
               colors={props.colors}
+              disabled={submission ? submission.readOnly : false}
             >
               {window.screen.width >= 768
                 ? `Language: ${language}`

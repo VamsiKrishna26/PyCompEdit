@@ -270,7 +270,7 @@ const Editor = (props) => {
 
   useEffect(() => {
     let code = JSON.parse(localStorage.getItem("code"));
-    if (location.state) {
+    if (location.state&&location.state.language===language) {
       setUploadFileText(location.state.source_code);
     } else if (code && code[language]) {
       code[language] = code[language]
@@ -375,6 +375,7 @@ const Editor = (props) => {
             changeFontWeight={changeFontWeight}
             changeFontFamily={changeFontFamily}
             changeLanguage={changeLanguage}
+            submission={location.state?location.state:null}
             {...props}
           />
           <div className="save_dark">

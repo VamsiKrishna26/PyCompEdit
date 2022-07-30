@@ -1,17 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import configData from "../../config.json";
-import { Button,Dropdown } from "react-bootstrap";
+import { Button, Dropdown } from "react-bootstrap";
 import SortBar from "./SortBar";
 import PaginationComp from "./Pagination";
 import Discussion from "./Discussion";
+import { useNavigate } from "react-router-dom";
+import { BsSearch, BsFillEraserFill } from "react-icons/bs";
+
 const DiscussionsDiv = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 
   .discussion {
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 700px;
+
+    .search {
+      flex: 0.8;
+      border-radius: 15px 15px 15px 15px;
+      border: ${(props) =>
+        props.$darkThemeHome
+          ? `1px solid ${props.colors.black}`
+          : `1px solid ${props.colors.theme}`};
+      padding: 1em;
+      background-color: ${(props) =>
+        props.$darkThemeHome ? props.colors.dark : props.colors.white};
+      font-family: ${(props) => props.font};
+      color: ${(props) =>
+        props.$darkThemeHome ? props.colors.white : props.colors.black};
+      margin-top: 0.5em;
+    }
+    .icon {
+      flex: 0.1;
+      color: ${(props) =>
+        props.$darkThemeHome ? props.colors.white : props.colors.theme};
+      font-size: larger;
+      cursor: pointer;
+    }
   }
 
   .documents {
@@ -23,8 +56,8 @@ const DiscussionsDiv = styled.div`
     align-self: center;
   }
 
-  .add-discussion{
-    display:flex;
+  .add-discussion {
+    display: flex;
     justify-content: flex-end;
     align-items: center;
   }
@@ -76,23 +109,35 @@ const StyledButton = styled(Button)`
     props.$darkTheme ? props.colors.dark : props.colors.white};
   margin: 0.5em;
   border: ${(props) =>
-    props.$darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`};
+    props.$darkTheme
+      ? `1px solid ${props.colors.black}`
+      : `1px solid ${props.colors.theme}`};
   :hover {
     color: ${(props) =>
       props.$darkTheme ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
       props.$darkTheme ? props.colors.white : props.colors.dark};
     border: ${(props) =>
-      props.$darkTheme ? `1px solid ${props.colors.theme}` : `1px solid ${props.colors.black}`};
+      props.$darkTheme
+        ? `1px solid ${props.colors.theme}`
+        : `1px solid ${props.colors.black}`};
   }
 `;
 
 const Discussions = (props) => {
-  const [sort, setSort] = useState({ finished_at: -1 });
+  const [sort, setSort] = useState(
+    JSON.parse(localStorage.getItem("discussionSort")) || {
+      finished_at: -1,
+    }
+  );
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(
+    JSON.parse(localStorage.getItem("discussionPage")) || 1
+  );
 
-  const [noOfDocuments, setNoOfDocuments] = useState(10);
+  const [noOfDocuments, setNoOfDocuments] = useState(
+    JSON.parse(localStorage.getItem("discussionNoOfDocuments")) || 10
+  );
 
   const [discussions, setDiscussions] = useState([]);
 
@@ -100,7 +145,35 @@ const Discussions = (props) => {
 
   const [pages, setPages] = useState(1);
 
+  const [search, setSearch] = useState(
+    JSON.parse(localStorage.getItem("discussionSearch")) || ""
+  );
+
+  const searchRef = useRef(null);
+
   const { colors, font, font_sizes, $darkThemeHome } = props;
+
+  // useEffect(() => {
+  //   localStorage.setItem("discussionSort", JSON.stringify(sort));
+  // }, [sort]);
+
+  // useEffect(() => {
+  //   console.log(page);
+  //   localStorage.setItem("discussionPage", JSON.stringify(page));
+  // }, [page]);
+
+  // useEffect(() => {
+  //   localStorage.setItem(
+  //     "discussionNoOfDocuments",
+  //     JSON.stringify(noOfDocuments)
+  //   );
+  // }, [noOfDocuments]);
+
+  // useEffect(() => {
+  //   localStorage.setItem("discussionSearch", JSON.stringify(search));
+  // }, [search]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log(discussions);
@@ -115,6 +188,7 @@ const Discussions = (props) => {
           sort: sort,
           page: page,
           noOfDocuments: noOfDocuments,
+          search: search,
         },
         {
           headers: {
@@ -131,7 +205,7 @@ const Discussions = (props) => {
           console.log("The server is down. Please try again after some time.");
         }
       });
-  }, [sort, page, noOfDocuments]);
+  }, [sort, page, noOfDocuments, search]);
 
   useEffect(() => {
     axios
@@ -139,6 +213,7 @@ const Discussions = (props) => {
         configData.PORT + "/pages1",
         {
           noOfDocuments: noOfDocuments,
+          search: search,
         },
         {
           headers: {
@@ -155,7 +230,7 @@ const Discussions = (props) => {
         }
       });
     setPage(1);
-  }, [noOfDocuments]);
+  }, [noOfDocuments, search]);
 
   const documents = [10, 25, 50, 75, 100];
 
@@ -177,8 +252,6 @@ const Discussions = (props) => {
     return documentsList;
   };
 
-  
-
   return (
     <DiscussionsDiv
       colors={colors}
@@ -187,7 +260,16 @@ const Discussions = (props) => {
       $darkThemeHome={$darkThemeHome}
     >
       <div className="add-discussion">
-        <StyledButton fontFamily={font} $darkTheme={$darkThemeHome} colors={colors}>Add a discussion</StyledButton>
+        <StyledButton
+          fontFamily={font}
+          $darkTheme={$darkThemeHome}
+          colors={colors}
+          onClick={() => {
+            navigate(`/discussions/addDiscussion`);
+          }}
+        >
+          Add a discussion
+        </StyledButton>
       </div>
       <div className="sort-bar">
         <SortBar
@@ -197,6 +279,30 @@ const Discussions = (props) => {
           setSort={setSort}
           {...props}
         />
+      </div>
+      <div className="search-bar">
+        <div className="wrapper">
+          <input
+            className="search"
+            type="text"
+            name="search"
+            placeholder="Search through discussions..."
+            ref={searchRef}
+          />
+          <BsSearch
+            className="icon"
+            onClick={() => {
+              setSearch(searchRef.current.value);
+            }}
+          />
+          <BsFillEraserFill
+            className="icon"
+            onClick={() => {
+              searchRef.current.value = "";
+              setSearch(searchRef.current.value);
+            }}
+          />
+        </div>
       </div>
       <div className="discussion">
         {discussions.map((item, i) => (

@@ -5,22 +5,49 @@ import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import configData from "../../config.json";
+import {
+  BsFillFileEarmarkFill,
+  BsFileCodeFill,
+  BsFillCalendarDateFill,
+} from "react-icons/bs";
+import { TiTick, TiTimes } from "react-icons/ti";
+import { FiMoreHorizontal } from "react-icons/fi";
 
+const SubmissionMobileDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 60px;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  justify-content: center;
+  font-family: ${(props) => props.font};
+  color: ${(props) =>
+    props.$darkThemeHome ? props.colors.white : props.colors.black};
+  background-color: ${(props) =>
+    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  border: ${(props) =>
+    props.$darkThemeHome
+      ? `1px solid ${props.colors.black}`
+      : `1px solid ${props.colors.theme}`};
+  border-radius: 15px 15px 15px 15px;
+  padding: 0.7em;
 
-const SubmissionDiv = styled.tr`
-  .more {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    
+  .icon {
+    color: ${(props) =>
+      props.$darkThemeHome ? props.colors.white : props.colors.theme};
+    margin: 0.3em;
+  }
+
+  .more{
+    align-self: flex-end;
   }
 `;
 
 const StyledModal = styled(Modal)`
-.delete{
-  border:1px solid red;
-}
+  .delete {
+    border: 1px solid red;
+  }
 `;
 
 const StyledModalHeader = styled(Modal.Header)`
@@ -73,11 +100,11 @@ const StyledDownloadButton = styled(Button)`
       : `1px solid ${props.colors.theme}`};
   :hover {
     color: ${(props) =>
-    props.$darkThemeHome ? props.colors.black : props.colors.white};
+      props.$darkThemeHome ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.dark};
+      props.$darkThemeHome ? props.colors.white : props.colors.dark};
     border: ${(props) =>
-    props.$darkThemeHome ? `1px solid ${props.colors.theme}` : ""};
+      props.$darkThemeHome ? `1px solid ${props.colors.theme}` : ""};
   }
 `;
 
@@ -114,17 +141,25 @@ const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
   };
 
   const deleteSubmission = (_id) => {
-    axios.post(configData.PORT + '/deleteSubmission', {
-      submissionId: _id
-    }, {
-      headers: {
-        "Content-Type": "application/json",
-      }
-    }).then(() => { window.location.reload(false); })
+    axios
+      .post(
+        configData.PORT + "/deleteSubmission",
+        {
+          submissionId: _id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(() => {
+        window.location.reload(false);
+      })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
   return (
     <StyledModal {...props} onHide={onHide} centered>
@@ -172,7 +207,11 @@ const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
         <StyledDownloadButton {...props} onClick={editCode}>
           Edit
         </StyledDownloadButton>
-        <StyledDownloadButton className="delete" {...props} onClick={() => deleteSubmission(props.submission._id)}>
+        <StyledDownloadButton
+          className="delete"
+          {...props}
+          onClick={() => deleteSubmission(props.submission._id)}
+        >
           Delete
         </StyledDownloadButton>
       </StyledModalBody>
@@ -180,36 +219,52 @@ const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
   );
 };
 
-const Submission = (props) => {
-  const { submission, index, page, noOfDocuments } = props;
+const SubmissionMobile = (props) => {
+  const { submission } = props;
 
   const [showMoreModal, setShowMoreModal] = useState(false);
 
   return (
-    <SubmissionDiv>
-      <td>{(page - 1) * noOfDocuments + index + 1}</td>
-      <td>{submission.fileName}</td>
-      <td>{submission.language.name}</td>
-      <td>{moment(submission.finished_at).calendar()}</td>
-      <td>
+    <SubmissionMobileDiv
+      $darkThemeHome={props.$darkThemeHome}
+      colors={props.colors}
+      font={props.font}
+    >
+      <div>
+        <BsFillFileEarmarkFill className="icon" />
+        {submission.fileName}
+      </div>
+      <div>
+        <BsFileCodeFill className="icon" />
+        {submission.language.name}
+      </div>
+      <div>
+        <BsFillCalendarDateFill className="icon" />
+        {moment(submission.finished_at).calendar()}
+      </div>
+      <div>
         {submission.status.description === "Accepted" ? (
           <span style={{ color: "green" }}>
+            <TiTick className="icon" style={{ color: "green" }}/>
             {submission.status.description}
           </span>
         ) : (
-          <span style={{ color: "red" }}>{submission.status.description}</span>
+          <span style={{ color: "red" }}>
+            <TiTimes className="icon" style={{ color: "red" }}/>
+            {submission.status.description}
+          </span>
         )}
-      </td>
-      <td className="more" onClick={() => setShowMoreModal(true)}>
-        ...
-      </td>
+      </div>
+      <div className="more" onClick={() => setShowMoreModal(true)}>
+        More <FiMoreHorizontal className="icon"/>
+      </div>
       <MoreModal
         show={showMoreModal ? 1 : 0}
         onHide={() => setShowMoreModal(false)}
         {...props}
       />
-    </SubmissionDiv>
+    </SubmissionMobileDiv>
   );
 };
 
-export default Submission;
+export default SubmissionMobile;

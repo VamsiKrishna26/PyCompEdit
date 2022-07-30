@@ -236,6 +236,7 @@ const TextEditor = (props) => {
       if (!Text.isText(node)) {
         return ranges;
       }
+      console.log(language);
       const tokens = Prism.tokenize(
         node.text,
         Prism.languages[language.toLowerCase()]

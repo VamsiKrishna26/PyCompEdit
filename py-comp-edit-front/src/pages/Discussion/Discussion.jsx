@@ -14,7 +14,11 @@ import {
 import moment from "moment";
 import DiscussionBody from "./DiscussionBody";
 import Answer from "./Answer";
-import { Dropdown } from "react-bootstrap";
+import { Accordion, Dropdown } from "react-bootstrap";
+import AddAnswer from "./AddAnswer";
+import { createStructuredSelector } from "reselect";
+import { selectUser } from "../../redux/user/user.selecter";
+import { connect } from "react-redux";
 
 const DiscussionDiv = styled.div`
   display: flex;
@@ -95,6 +99,33 @@ const DiscussionDiv = styled.div`
     align-items: center;
     justify-content: space-between;
   }
+
+  .add-answer {
+    margin: 0.5em;
+  }
+
+  .accordion {
+    font-family: ${(props) => props.font};
+    --bs-accordion-border-color: ${(props) =>
+      props.$darkThemeHome
+        ? `${props.colors.black}`
+        : `${props.colors.theme}`} !important;
+    --bs-accordion-color: ${(props) =>
+      props.$darkThemeHome
+        ? props.colors.white
+        : props.colors.black} !important;
+    --bs-accordion-bg: ${(props) =>
+      props.$darkThemeHome ? props.colors.dark : props.colors.white} !important;
+    .accordion-button {
+      color: ${(props) =>
+        props.$darkThemeHome
+          ? `${props.colors.white}`
+          : `${props.colors.black}`} !important;
+      :not(.collapsed) {
+        color: ${(props) => props.colors.black} !important;
+      }
+    }
+  }
 `;
 
 const StyledDropDownToggle = styled(Dropdown.Toggle)`
@@ -136,6 +167,14 @@ const StyledDropDownItem = styled(Dropdown.Item)`
     props.$darkTheme ? props.colors.dark : props.colors.white};
 `;
 
+const StyledAccordion = styled(Accordion)``;
+
+const StyledAccordionItem = styled(Accordion.Item)``;
+
+const StyledAccordionHeader = styled(Accordion.Header)``;
+
+const StyledAccordionBody = styled(Accordion.Body)``;
+
 const Discussion = (props) => {
   const [discussion, setDiscussion] = useState(null);
 
@@ -146,6 +185,8 @@ const Discussion = (props) => {
   const sorts_list = ["Default", "Highest Scored", "Date Desc", "Date Asc"];
 
   const [sort, setSort] = useState("Default");
+
+  const { user } = props;
 
   const [scoreStatus, setScoreStatus] = useState({
     score: null,
@@ -158,7 +199,11 @@ const Discussion = (props) => {
   }, [discussion]);
 
   useEffect(() => {
-    if (discussion) setScoreStatus((prevState) => ({ ...prevState, score: discussion.Score }));
+    if (discussion)
+      setScoreStatus((prevState) => ({
+        ...prevState,
+        score: discussion.Score,
+      }));
   }, [discussion]);
 
   useEffect(() => {
@@ -187,7 +232,9 @@ const Discussion = (props) => {
     setScoreStatus((prevState) => ({
       ...prevState,
       smileActive: !scoreStatus.smileActive,
-      score: scoreStatus.smileActive ? scoreStatus.score - 1 : scoreStatus.score + 1,
+      score: scoreStatus.smileActive
+        ? scoreStatus.score - 1
+        : scoreStatus.score + 1,
     }));
   };
 
@@ -195,25 +242,27 @@ const Discussion = (props) => {
     setScoreStatus((prevState) => ({
       ...prevState,
       frownActive: !scoreStatus.frownActive,
-      score: scoreStatus.frownActive ? scoreStatus.score + 1 : scoreStatus.score - 1,
+      score: scoreStatus.frownActive
+        ? scoreStatus.score + 1
+        : scoreStatus.score - 1,
     }));
   };
 
-  const handleSmile=()=>{
-    if(scoreStatus.frownActive){
+  const handleSmile = () => {
+    if (scoreStatus.frownActive) {
       setSmile();
       setFrown();
     }
     setSmile();
-  }
+  };
 
-  const handleFrown=()=>{
-    if(scoreStatus.smileActive){
+  const handleFrown = () => {
+    if (scoreStatus.smileActive) {
       setFrown();
       setSmile();
     }
     setFrown();
-  }
+  };
 
   const sorts_jsx = (props) => {
     let sorts = [];
@@ -289,15 +338,17 @@ const Discussion = (props) => {
             </div>
             <div className="scores">
               {!scoreStatus.smileActive ? (
-                <BsEmojiSmile className="icon" onClick={handleSmile}/>
+                <BsEmojiSmile className="icon" onClick={handleSmile} />
               ) : (
-                <BsEmojiSmileFill className="icon" onClick={handleSmile}/>
+                <BsEmojiSmileFill className="icon" onClick={handleSmile} />
               )}
-              {scoreStatus.score||scoreStatus.score===0 ? scoreStatus.score : null}
+              {scoreStatus.score || scoreStatus.score === 0
+                ? scoreStatus.score
+                : null}
               {!scoreStatus.frownActive ? (
-                <BsEmojiFrown className="icon" onClick={handleFrown}/>
+                <BsEmojiFrown className="icon" onClick={handleFrown} />
               ) : (
-                <BsEmojiFrownFill className="icon" onClick={handleFrown}/>
+                <BsEmojiFrownFill className="icon" onClick={handleFrown} />
               )}
             </div>
           </div>
@@ -337,8 +388,38 @@ const Discussion = (props) => {
                 </StyledDropDownMenu>
               </Dropdown>
             </div>
+            {user ? (
+              <StyledAccordion
+                font={props.font}
+                $darkTheme={props.$darkThemeHome}
+                colors={props.colors}
+                className="add-answer"
+              >
+                <StyledAccordionItem
+                  font={props.font}
+                  $darkTheme={props.$darkThemeHome}
+                  colors={props.colors}
+                  eventKey="0"
+                >
+                  <StyledAccordionHeader
+                    font={props.font}
+                    $darkTheme={props.$darkThemeHome}
+                    colors={props.colors}
+                  >
+                    Add Answer
+                  </StyledAccordionHeader>
+                  <StyledAccordionBody
+                    font={props.font}
+                    $darkTheme={props.$darkThemeHome}
+                    colors={props.colors}
+                  >
+                    <AddAnswer discussionId={discussion.Id} {...props} />
+                  </StyledAccordionBody>
+                </StyledAccordionItem>
+              </StyledAccordion>
+            ) : null}
             {answers.map((answer, index) => (
-              <Answer {...props} key={index} answer={answer} />
+              <Answer discussionId={discussion.Id} {...props} key={index} answer={answer} />
             ))}
           </div>
         </div>
@@ -349,4 +430,8 @@ const Discussion = (props) => {
   );
 };
 
-export default Discussion;
+const mapStateToProps = createStructuredSelector({
+  user: selectUser,
+});
+
+export default connect(mapStateToProps)(Discussion);

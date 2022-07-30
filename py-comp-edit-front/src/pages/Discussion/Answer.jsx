@@ -11,6 +11,10 @@ import {
   BsEmojiFrown,
 } from "react-icons/bs";
 import moment from "moment";
+import { AiFillEdit } from "react-icons/ai";
+import { createStructuredSelector } from "reselect";
+import { selectUser } from "../../redux/user/user.selecter";
+import { connect } from "react-redux";
 
 const AnswerDiv = styled.div`
   border: ${(props) =>
@@ -64,7 +68,9 @@ const AnswerDiv = styled.div`
 `;
 
 const Answer = (props) => {
-  const { answer } = props;
+  const { answer, discussionId, user } = props;
+
+  // console.log(Object.keys(user.answers),discussionId)
 
   const [scoreStatus, setScoreStatus] = useState({
     score: null,
@@ -73,14 +79,17 @@ const Answer = (props) => {
   });
 
   useEffect(() => {
-    if (answer) setScoreStatus((prevState) => ({ ...prevState, score: answer.Score }));
+    if (answer)
+      setScoreStatus((prevState) => ({ ...prevState, score: answer.Score }));
   }, [answer]);
 
   const setSmile = () => {
     setScoreStatus((prevState) => ({
       ...prevState,
       smileActive: !scoreStatus.smileActive,
-      score: scoreStatus.smileActive ? scoreStatus.score - 1 : scoreStatus.score + 1,
+      score: scoreStatus.smileActive
+        ? scoreStatus.score - 1
+        : scoreStatus.score + 1,
     }));
   };
 
@@ -88,25 +97,27 @@ const Answer = (props) => {
     setScoreStatus((prevState) => ({
       ...prevState,
       frownActive: !scoreStatus.frownActive,
-      score: scoreStatus.frownActive ? scoreStatus.score + 1 : scoreStatus.score - 1,
+      score: scoreStatus.frownActive
+        ? scoreStatus.score + 1
+        : scoreStatus.score - 1,
     }));
   };
 
-  const handleSmile=()=>{
-    if(scoreStatus.frownActive){
+  const handleSmile = () => {
+    if (scoreStatus.frownActive) {
       setSmile();
       setFrown();
     }
     setSmile();
-  }
+  };
 
-  const handleFrown=()=>{
-    if(scoreStatus.smileActive){
+  const handleFrown = () => {
+    if (scoreStatus.smileActive) {
       setFrown();
       setSmile();
     }
     setFrown();
-  }
+  };
 
   useEffect(() => {
     props.$darkThemeHome
@@ -149,18 +160,32 @@ const Answer = (props) => {
             {moment(answer.CreationDate).calendar()}
           </span>
           <span className="children">
-          {!scoreStatus.smileActive ? (
-                <BsEmojiSmile className="icon icon-score" onClick={handleSmile}/>
-              ) : (
-                <BsEmojiSmileFill className="icon icon-score" onClick={handleSmile}/>
-              )}
-              {scoreStatus.score||scoreStatus.score===0 ? scoreStatus.score : null}
-              {!scoreStatus.frownActive ? (
-                <BsEmojiFrown className="icon icon-score" onClick={handleFrown}/>
-              ) : (
-                <BsEmojiFrownFill className="icon icon-score" onClick={handleFrown}/>
-              )}
+            {!scoreStatus.smileActive ? (
+              <BsEmojiSmile className="icon icon-score" onClick={handleSmile} />
+            ) : (
+              <BsEmojiSmileFill
+                className="icon icon-score"
+                onClick={handleSmile}
+              />
+            )}
+            {scoreStatus.score || scoreStatus.score === 0
+              ? scoreStatus.score
+              : null}
+            {!scoreStatus.frownActive ? (
+              <BsEmojiFrown className="icon icon-score" onClick={handleFrown} />
+            ) : (
+              <BsEmojiFrownFill
+                className="icon icon-score"
+                onClick={handleFrown}
+              />
+            )}
           </span>
+          {user &&
+          user.answers.includes(String(discussionId)+'_'+String(answer.Id)) ? (
+            <span className="children">
+              <AiFillEdit className="icon" style={{cursor:'pointer'}}/>
+            </span>
+          ) : null}
         </div>
         {parse(`<div className="body-answer">${answer.Body}</div>`, options)}
       </div>
@@ -168,4 +193,8 @@ const Answer = (props) => {
   );
 };
 
-export default Answer;
+const mapStateToProps = createStructuredSelector({
+  user: selectUser,
+});
+
+export default connect(mapStateToProps)(Answer);
