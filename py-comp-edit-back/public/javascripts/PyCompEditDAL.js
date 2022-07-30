@@ -142,12 +142,23 @@ PyCompEditDAL.register = async function (email, password, dob, name) {
       throw new Error("Email address already registered!!");
     } else {
       password = await bcrypt.hash(password, 10);
-      await db.collection("Users").insertOne({
-        email: email,
-        password: password,
-        dob: dob,
-        name: name,
-      });
+      let insertedId = (
+        await db.collection("Users").insertOne({
+          email: email,
+          password: password,
+          dob: dob,
+          name: name,
+          discussions: [],
+          answers: [],
+        })
+      ).insertedId;
+      let userId = ObjectId(insertedId)
+        .toString()
+        .replace(/[a-zA-z]/g, "")
+        .slice(0, 8);
+      await db
+        .collection("Users")
+        .updateOne({ _id: ObjectId(insertedId) }, { $set: { userId: userId } });
       return "Success";
     }
   });
@@ -187,8 +198,10 @@ PyCompEditDAL.login = async function (email, password) {
                       reject(err);
                     } else {
                       resolve({
-                        userId: dbUser._id,
+                        userId: dbUser.userId,
                         name: dbUser.name,
+                        discussions: dbUser.discussions,
+                        answers: dbUser.answers,
                         message: "Success",
                         token: "Bearer " + token,
                       });
@@ -243,10 +256,25 @@ PyCompEditDAL.submissions = async function (userId, sort, page, noOfDocuments) {
   });
 };
 
-PyCompEditDAL.noOfPages = async function (noOfDocuments) {
+PyCompEditDAL.noOfPages = async function (noOfDocuments, userId) {
   noOfDocuments = !noOfDocuments ? 5 : noOfDocuments;
   return connection.getConnection().then(async function (db) {
-    let documents = await db.collection("Submissions").countDocuments();
+    let documents = 0;
+    try {
+      documents=(await db.collection("Submissions").aggregate([
+        {
+          $match: {
+            userId: userId,
+          },
+        },
+        {
+          $count: "Count",
+        }
+      ]).toArray())[0].Count;
+    } catch (e) {
+      console.log(e);
+      documents = 1;
+    }
     return Math.ceil(documents / noOfDocuments);
   });
 };
@@ -264,7 +292,7 @@ PyCompEditDAL.deleteSubmission = async function (submissionId) {
   });
 };
 
-PyCompEditDAL.discussions = async function (sort, page, noOfDocuments) {
+PyCompEditDAL.discussions = async function (sort, page, noOfDocuments, search) {
   if (sort) {
     sort[ObjectId] = 1;
   } else {
@@ -274,57 +302,172 @@ PyCompEditDAL.discussions = async function (sort, page, noOfDocuments) {
   page = page ? page : 1;
   noOfDocuments = noOfDocuments ? noOfDocuments : 10;
   return connection.getConnection().then(async function (db) {
-    return db
-      .collection("Discussions")
-      .aggregate(
-        [
-          {
-            $sort: sort,
-          },
-          {
-            $skip: (page - 1) * noOfDocuments,
-          },
-          {
-            $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER,
-          },
-          {
-            $project: {
-              _id: 1,
-              userId: 1,
-              Score: 1,
-              CreationDate: 1,
-              Title: 1,
-              Views: 1,
-            },
-          },
-        ],
-        {
-          collation: {
-            locale: "en",
-          },
-        }
-      )
-      .toArray();
+    return search && search !== ""
+      ? db
+          .collection("Discussions")
+          .aggregate(
+            [
+              {
+                $match: {
+                  $text: {
+                    $search: search,
+                  },
+                },
+              },
+              { $sort: { score: { $meta: "textScore" } } },
+              {
+                $skip: (page - 1) * noOfDocuments,
+              },
+              {
+                $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER,
+              },
+              {
+                $project: {
+                  _id: 1,
+                  userId: 1,
+                  Score: 1,
+                  CreationDate: 1,
+                  Title: 1,
+                  Views: 1,
+                  Answers:1
+                },
+              },
+            ],
+            {
+              collation: {
+                locale: "en",
+              },
+            }
+          )
+          .toArray()
+      : db
+          .collection("Discussions")
+          .aggregate(
+            [
+              {
+                $sort: sort,
+              },
+              {
+                $skip: (page - 1) * noOfDocuments,
+              },
+              {
+                $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER,
+              },
+              {
+                $project: {
+                  _id: 1,
+                  userId: 1,
+                  Score: 1,
+                  CreationDate: 1,
+                  Title: 1,
+                  Views: 1,
+                  Answers:1
+                },
+              },
+            ],
+            {
+              collation: {
+                locale: "en",
+              },
+            }
+          )
+          .toArray();
   });
 };
 
-PyCompEditDAL.noOfPages1 = async function (noOfDocuments) {
+PyCompEditDAL.noOfPages1 = async function (noOfDocuments, search) {
   noOfDocuments = !noOfDocuments ? 10 : noOfDocuments;
   return connection.getConnection().then(async function (db) {
-    let documents = await db.collection("Discussions").countDocuments();
+    let documents = 0;
+    if (search && search !== "") {
+      try {
+        documents = (
+          await db
+            .collection("Discussions")
+            .aggregate([
+              {
+                $match: {
+                  $text: {
+                    $search: search,
+                  },
+                },
+              },
+              {
+                $count: "Count",
+              },
+            ])
+            .toArray()
+        )[0].Count;
+      } catch (e) {
+        console.log(e);
+        documents = 1;
+      }
+    } else {
+      documents = await db.collection("Discussions").countDocuments();
+    }
     return Math.ceil(documents / noOfDocuments);
   });
 };
 
 PyCompEditDAL.getDiscussionById = async function (_id) {
   return connection.getConnection().then(async function (db) {
-    let discussion=await db.collection("Discussions").findOne({ _id: ObjectId(_id) });
-    if(!discussion){
+    let discussion = await db
+      .collection("Discussions")
+      .findOne({ _id: ObjectId(_id) });
+    if (!discussion) {
       throw new Error("Discussion ID not present");
     }
-    return discussion
+    return discussion;
   });
 };
+
+PyCompEditDAL.addDiscussion = async function (discussion) {
+  return connection.getConnection().then(async function (db) {
+    discussion.Id = await PyCompEditDAL.getDiscussionId();
+    discussion.CreationDate = new Date();
+    discussion.Score = 0;
+    discussion.Answers = [];
+    discussion.Views = 0;
+    let discussionId = (
+      await db.collection("Discussions").insertOne(discussion)
+    ).insertedId;
+    await db
+      .collection("Users")
+      .updateOne(
+        { userId: discussion.userId },
+        { $push: { discussions: discussionId } }
+      );
+    return discussionId;
+  });
+};
+
+PyCompEditDAL.getDiscussionId = async function () {
+  return connection.getConnection().then(async function (db) {
+    let document = await db
+      .collection("Discussions")
+      .aggregate([{ $sample: { size: 1 } }, { $project: { Id: 1, _id: 0 } }])
+      .toArray();
+    return String(Math.floor(Math.random() * document[0]["Id"]));
+  });
+};
+
+PyCompEditDAL.addAnswer=async function(discussionId,answer){
+  return connection.getConnection().then(async function(db){
+    answer.Id=String(Math.floor(Math.random() * 1000000)+1);
+    answer.CreationDate = new Date();
+    answer.ParentId=discussionId;
+    answer.Score=0;
+    await db.collection("Discussions").updateOne({Id:discussionId},{$push:{Answers:answer}});
+    let String1=String(discussionId)+'_'+String(answer.Id)
+    await db
+      .collection("Users")
+      .updateOne(
+        { userId: answer.userId },
+        { $push: { answers: String1 } }
+      );
+    return String1;
+  })
+}
 
 PyCompEditDAL.verifyJWT = async function (req, res, next) {
   const token = req.headers["x-access-token"]?.split(" ")[1];
@@ -360,19 +503,21 @@ PyCompEditDAL.localOperations = async function () {
       // //     list1.push(response[i]["ParentId"]);
       // // }
       // // let questions= (await db.collection("Questions").deleteMany({"Id":{$nin:list1}}).toArray()).length
-      // let dict1 = {}
+      let dict1 = {};
       // let list1=[]
       // let questionIds = await db.collection("Questions").find({}, { projection: { "Id": 1, _id: 0 } }).toArray();
       // for (var i = 0; i < questionIds.length; i++) {
       //     list1.push(questionIds[i]["Id"]);
       // }
+      // await db.collection("Answers").deleteMany({"ParentId":{$nin:list1}})
       // let answers=await db.collection("Answers").find({}).toArray()
       // for (var i=0;i<answers.length;i++){
-      //     if(Object.keys(dict1).includes(answers[i]["ParentId"])){
-      //         dict1[answers[i]["ParentId"]].push(answers[i])
+      //     let key=answers[i]["ParentId"]
+      //     if(Object.keys(dict1).includes(key)){
+      //         dict1[key].push(answers[i])
       //     }
       //     else{
-      //         dict1[answers[i]["ParentId"]]=[answers[i]]
+      //         dict1[key]=[answers[i]]
       //     }
       // }
       // let keys=Object.keys(dict1);
@@ -383,13 +528,15 @@ PyCompEditDAL.localOperations = async function () {
       //     await db.collection("Discussions").updateOne({_id:doc._id},{$set:{"Views":Math.floor(Math.random()*8+3)*doc.Score}});
       // })
       // db.collection("Questions").updateMany({},{$rename:{"OwnerUserId":"userId"}})
-      // await db.collection("Questions").updateMany(
-      //     { Score : { $type: 2 } },
-      //     [{ $set: { Score: { $toInt: "$Score" } } }]
+      // db.collection("Answers").updateMany({},{$rename:{"OwnerUserId":"userId"}})
+      // await db.collection("Answers").updateMany(
+      //     {},
+      //     [{ $set: { ParentId: { $toString: "$ParentId" } } }]
       //   )
+      // await db.collection("Submissions").updateMany({},{$set:{"userId":"62252034"}})
       return "Success";
-    } catch {
-      throw new Error("Submission ID not present");
+    } catch (e) {
+      throw new Error(e);
     }
   });
 };
