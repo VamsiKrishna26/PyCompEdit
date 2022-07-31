@@ -216,7 +216,13 @@ PyCompEditDAL.login = async function (email, password) {
   });
 };
 
-PyCompEditDAL.submissions = async function (userId, sort, page, noOfDocuments) {
+PyCompEditDAL.submissions = async function (
+  userId,
+  sort,
+  page,
+  noOfDocuments,
+  search
+) {
   if (sort) {
     sort[ObjectId] = 1;
   } else {
@@ -226,51 +232,106 @@ PyCompEditDAL.submissions = async function (userId, sort, page, noOfDocuments) {
   page = page ? page : 1;
   noOfDocuments = noOfDocuments ? noOfDocuments : 10;
   return connection.getConnection().then(async function (db) {
-    return db
-      .collection("Submissions")
-      .aggregate(
-        [
-          {
-            $match: {
-              userId: userId,
+    return  search && search !== ""
+    ? db
+        .collection("Submissions")
+        .aggregate(
+          [
+            {
+              $match: {
+                userId: userId,
+                $text: {
+                  $search: search,
+                },
+              },
             },
-          },
+            { $sort: { score: { $meta: "textScore" } } },
+            {
+              $skip: (page - 1) * noOfDocuments,
+            },
+            {
+              $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER,
+            },
+          ],
           {
-            $sort: sort,
-          },
-          {
-            $skip: (page - 1) * noOfDocuments,
-          },
-          {
-            $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER,
-          },
-        ],
-        {
-          collation: {
-            locale: "en",
-          },
-        }
-      )
+            collation: {
+              locale: "en",
+            },
+          }
+        )
 
-      .toArray();
+        .toArray()
+    :db
+          .collection("Submissions")
+          .aggregate(
+            [
+              {
+                $match: {
+                  userId: userId,
+                },
+              },
+              {
+                $sort: sort,
+              },
+              {
+                $skip: (page - 1) * noOfDocuments,
+              },
+              {
+                $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER,
+              },
+            ],
+            {
+              collation: {
+                locale: "en",
+              },
+            }
+          )
+          .toArray();
   });
 };
 
-PyCompEditDAL.noOfPages = async function (noOfDocuments, userId) {
+PyCompEditDAL.noOfPages = async function (noOfDocuments, userId,search) {
   noOfDocuments = !noOfDocuments ? 5 : noOfDocuments;
   return connection.getConnection().then(async function (db) {
     let documents = 0;
     try {
-      documents=(await db.collection("Submissions").aggregate([
-        {
-          $match: {
-            userId: userId,
-          },
-        },
-        {
-          $count: "Count",
-        }
-      ]).toArray())[0].Count;
+      if(search&&search!==""){
+        documents = (
+          await db
+            .collection("Submissions")
+            .aggregate([
+              {
+                $match: {
+                  userId: userId,
+                  $text: {
+                    $search: search,
+                  }
+                },
+              },
+              {
+                $count: "Count",
+              },
+            ])
+            .toArray()
+        )[0].Count;
+      }
+      else{
+        documents = (
+          await db
+            .collection("Submissions")
+            .aggregate([
+              {
+                $match: {
+                  userId: userId,
+                },
+              },
+              {
+                $count: "Count",
+              },
+            ])
+            .toArray()
+        )[0].Count;
+      }
     } catch (e) {
       console.log(e);
       documents = 1;
@@ -329,7 +390,7 @@ PyCompEditDAL.discussions = async function (sort, page, noOfDocuments, search) {
                   CreationDate: 1,
                   Title: 1,
                   Views: 1,
-                  Answers:1
+                  Answers: 1,
                 },
               },
             ],
@@ -361,7 +422,7 @@ PyCompEditDAL.discussions = async function (sort, page, noOfDocuments, search) {
                   CreationDate: 1,
                   Title: 1,
                   Views: 1,
-                  Answers:1
+                  Answers: 1,
                 },
               },
             ],
@@ -451,23 +512,22 @@ PyCompEditDAL.getDiscussionId = async function () {
   });
 };
 
-PyCompEditDAL.addAnswer=async function(discussionId,answer){
-  return connection.getConnection().then(async function(db){
-    answer.Id=String(Math.floor(Math.random() * 1000000)+1);
+PyCompEditDAL.addAnswer = async function (discussionId, answer) {
+  return connection.getConnection().then(async function (db) {
+    answer.Id = String(Math.floor(Math.random() * 1000000) + 1);
     answer.CreationDate = new Date();
-    answer.ParentId=discussionId;
-    answer.Score=0;
-    await db.collection("Discussions").updateOne({Id:discussionId},{$push:{Answers:answer}});
-    let String1=String(discussionId)+'_'+String(answer.Id)
+    answer.ParentId = discussionId;
+    answer.Score = 0;
+    await db
+      .collection("Discussions")
+      .updateOne({ Id: discussionId }, { $push: { Answers: answer } });
+    let String1 = String(discussionId) + "_" + String(answer.Id);
     await db
       .collection("Users")
-      .updateOne(
-        { userId: answer.userId },
-        { $push: { answers: String1 } }
-      );
+      .updateOne({ userId: answer.userId }, { $push: { answers: String1 } });
     return String1;
-  })
-}
+  });
+};
 
 PyCompEditDAL.verifyJWT = async function (req, res, next) {
   const token = req.headers["x-access-token"]?.split(" ")[1];
@@ -534,6 +594,8 @@ PyCompEditDAL.localOperations = async function () {
       //     [{ $set: { ParentId: { $toString: "$ParentId" } } }]
       //   )
       // await db.collection("Submissions").updateMany({},{$set:{"userId":"62252034"}})
+      // await db.collection("Submissions").createIndex( {fileName:"text",language:"text",notes:"text","status.description":"text"},
+      //                  { language_override: "dummy" } )
       return "Success";
     } catch (e) {
       throw new Error(e);

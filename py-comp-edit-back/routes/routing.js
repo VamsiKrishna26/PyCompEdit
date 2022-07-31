@@ -62,7 +62,8 @@ routing.post("/submissions", function (req, res, next) {
     req.body.userId,
     req.body.sort,
     req.body.page,
-    req.body.noOfDocuments
+    req.body.noOfDocuments,
+    req.body.search
   )
     .then((response) => {
       res.json(response);
@@ -73,7 +74,7 @@ routing.post("/submissions", function (req, res, next) {
 });
 
 routing.post("/pages", function (req, res, next) {
-  PyCompEditDAL.noOfPages(req.body.noOfDocuments,req.body.userId)
+  PyCompEditDAL.noOfPages(req.body.noOfDocuments,req.body.userId,req.body.search)
     .then((response) => {
       res.json(response);
     })
