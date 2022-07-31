@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import SubmissionMobile from "./SubmissionMobile";
 import { selectUser } from "../../redux/user/user.selecter";
 import { connect } from "react-redux";
 import Filters from "./Filters";
+import { BsSearch, BsFillEraserFill } from "react-icons/bs";
 
 const SubmissionsDiv = styled.div`
   display: flex;
@@ -36,6 +37,45 @@ const SubmissionsDiv = styled.div`
   .pagination {
     margin: 1em;
     align-self: center;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 700px;
+
+    .search {
+      flex: 0.8;
+      border-radius: 15px 15px 15px 15px;
+      border: ${(props) =>
+        props.$darkThemeHome
+          ? `1px solid ${props.colors.black}`
+          : `1px solid ${props.colors.theme}`};
+      padding: 1em;
+      background-color: ${(props) =>
+        props.$darkThemeHome ? props.colors.dark : props.colors.white};
+      font-family: ${(props) => props.font};
+      color: ${(props) =>
+        props.$darkThemeHome ? props.colors.white : props.colors.black};
+      margin-top: 0.5em;
+    }
+    .icon {
+      flex: 0.1;
+      color: ${(props) =>
+        props.$darkThemeHome ? props.colors.white : props.colors.theme};
+      font-size: larger;
+      cursor: pointer;
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    .pagination{
+      margin: 0em;
+    }
+    .documents{
+      margin: 0.5em;
+    }
   }
 `;
 
@@ -113,6 +153,8 @@ const Submissions = (props) => {
 
   const navigate = useNavigate();
 
+  const [search, setSearch] = useState("");
+
   const { colors, font, font_sizes, $darkThemeHome, user } = props;
 
   useEffect(() => {
@@ -141,6 +183,7 @@ const Submissions = (props) => {
           sort: sort,
           page: page,
           noOfDocuments: noOfDocuments,
+          search: search,
         },
         {
           headers: {
@@ -157,7 +200,7 @@ const Submissions = (props) => {
           console.log("The server is down. Please try again after some time.");
         }
       });
-  }, [sort, page, noOfDocuments]);
+  }, [user,sort, page, noOfDocuments,search]);
 
   useEffect(() => {
     axios
@@ -166,6 +209,7 @@ const Submissions = (props) => {
         {
           noOfDocuments: noOfDocuments,
           userId: user.userId,
+          search: search,
         },
         {
           headers: {
@@ -182,9 +226,11 @@ const Submissions = (props) => {
         }
       });
     setPage(1);
-  }, [noOfDocuments]);
+  }, [user,noOfDocuments,search]);
 
   const documents = [5, 10, 15, 25, 50];
+
+  const searchRef = useRef(null);
 
   const documents_list = (props) => {
     let documentsList = [];
@@ -219,6 +265,30 @@ const Submissions = (props) => {
           setSort={setSort}
           {...props}
         />
+      </div>
+      <div className="search-bar">
+        <div className="wrapper">
+          <input
+            className="search"
+            type="text"
+            name="search"
+            placeholder="Search Filenames, languages, statuses and notes"
+            ref={searchRef}
+          />
+          <BsSearch
+            className="icon"
+            onClick={() => {
+              setSearch(searchRef.current.value);
+            }}
+          />
+          <BsFillEraserFill
+            className="icon"
+            onClick={() => {
+              searchRef.current.value = "";
+              setSearch(searchRef.current.value);
+            }}
+          />
+        </div>
       </div>
       <div className="table-filter">
         <Filters />

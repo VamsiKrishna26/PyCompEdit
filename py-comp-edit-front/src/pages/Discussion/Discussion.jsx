@@ -126,6 +126,18 @@ const DiscussionDiv = styled.div`
       }
     }
   }
+
+  @media only screen and (max-width: 768px) {
+    padding: 0.5em;
+    .add-answer{
+      margin: 0em 0em 0.5em 0em;
+    }
+    .accordion {
+      .accordion-body{
+        padding: 0.3em !important;
+      }
+    }
+  }
 `;
 
 const StyledDropDownToggle = styled(Dropdown.Toggle)`

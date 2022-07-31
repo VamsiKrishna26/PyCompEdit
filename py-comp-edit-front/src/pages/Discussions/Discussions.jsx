@@ -61,6 +61,15 @@ const DiscussionsDiv = styled.div`
     justify-content: flex-end;
     align-items: center;
   }
+
+  @media only screen and (max-width: 768px) {
+    .pagination{
+      margin: 0em;
+    }
+    .documents{
+      margin: 0.5em;
+    }
+  }
 `;
 const StyledDropDownToggle = styled(Dropdown.Toggle)`
   font-family: ${(props) => props.font};

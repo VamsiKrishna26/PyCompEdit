@@ -23,6 +23,11 @@ const AddAnswerInputDiv = styled.div`
       font-size: 14px;
     }
   }
+  @media only screen and (max-width: 768px) {
+    .editor{
+      margin: 0em;
+    }
+  }
 `;
 
 const AddAnswerInput = (props) => {

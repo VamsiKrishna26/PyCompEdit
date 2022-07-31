@@ -21,6 +21,11 @@ const AppDiv = styled.div`
     min-height: 100vh;
   }
 
+  @media only screen and (max-width: 768px) {
+    .body{
+      padding: 0.5em;
+    }
+  }
 `;
 
 const App = (props) => {
@@ -28,11 +33,11 @@ const App = (props) => {
   const { user } = props;
 
   let [darkThemeHome, setDarkThemeHome] = useState(
-    // window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-    true
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    // true
     );
 
-  let colors = { dark: "rgb(66,66,66)", white: "white", theme: "#3D85C6", black: "black", dark_bg: "rgb(128, 128, 128)" };
+  let colors = { dark: "rgb(66,66,66)", white: "white", theme: "#4D85C6", black: "black", dark_bg: "rgb(128, 128, 128)" };
 
   let font_sizes = { heading1: "28px", heading2: "24px", heading3: "20px", heading4: "18px", text: "16px" };
 

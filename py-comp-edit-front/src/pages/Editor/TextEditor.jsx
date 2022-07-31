@@ -21,7 +21,9 @@ const TextEditorDiv = styled.div`
     overflow-y: auto;
     border-radius: 15px 15px 15px 15px;
     border: ${(props) =>
-      props.darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`};
+      props.darkTheme
+        ? `1px solid ${props.colors.black}`
+        : `1px solid ${props.colors.theme}`};
     padding: 1em;
     font-family: ${(props) => props.fontFamily};
     font-size: ${(props) => props.fontSize};
@@ -53,6 +55,12 @@ const TextEditorDiv = styled.div`
       .text-area {
         border: 1px solid red;
       }
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    .text-editor-div {
+      padding: 0.5em;
     }
   }
 `;
@@ -317,6 +325,10 @@ const TextEditor = (props) => {
     } else if (e.key === '"') {
       e.preventDefault();
       editor.insertText('""');
+      Transforms.move(editor, { distance: 1, reverse: true });
+    } else if (e.key === "'") {
+      e.preventDefault();
+      editor.insertText("''");
       Transforms.move(editor, { distance: 1, reverse: true });
     }
     let charCode = String.fromCharCode(e.which).toLowerCase();

@@ -43,6 +43,12 @@ const RunButtonDiv = styled.div`
       }
     }
   }
+
+  @media only screen and (max-width: 768px) {
+    .run-button{
+      margin-right: 0.5em !important;
+    }
+  }
 `;
 
 const RunButton = (props) => {

@@ -20,12 +20,19 @@ const SortBarDiv = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+  flex-wrap: wrap;
 
   .sort-item {
     cursor: pointer;
 
     .sort-selected {
       font-weight: bold;
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    .sort-item{
+      flex:1 0 45%;
     }
   }
 `;

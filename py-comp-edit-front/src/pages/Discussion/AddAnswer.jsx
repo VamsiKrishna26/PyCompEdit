@@ -30,6 +30,10 @@ const AddAnswerDiv = styled.div`
       align-self: flex-end;
     }
   }
+
+  @media only screen and (max-width: 768px) {
+    padding: 0.2em;
+  }
 `;
 
 const StyledButton = styled(Button)`

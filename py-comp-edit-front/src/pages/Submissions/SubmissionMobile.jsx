@@ -42,6 +42,9 @@ const SubmissionMobileDiv = styled.div`
   .more{
     align-self: flex-end;
   }
+  @media only screen and (max-width: 768px) {
+    padding: 0.3em ;
+  }
 `;
 
 const StyledModal = styled(Modal)`

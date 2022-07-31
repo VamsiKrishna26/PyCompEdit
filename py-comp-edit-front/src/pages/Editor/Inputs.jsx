@@ -51,6 +51,11 @@ const InputsDiv = styled.div`
         margin: 0em;
       }
     }
+
+    .stdin_file-name {
+      margin: 0.5em 0em 0.5em 0em;
+      padding: 0.5em;
+    }
   }
 `;
 

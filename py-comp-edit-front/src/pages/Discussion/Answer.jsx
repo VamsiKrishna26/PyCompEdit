@@ -65,6 +65,10 @@ const AnswerDiv = styled.div`
   p {
     margin: 0.3em !important;
   }
+
+  @media only screen and (max-width: 768px) {
+    padding: 0em;
+  }
 `;
 
 const Answer = (props) => {

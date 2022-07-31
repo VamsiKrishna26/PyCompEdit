@@ -13,6 +13,7 @@ import { createStructuredSelector } from "reselect";
 import { selectUser } from "../../redux/user/user.selecter";
 import { AiFillEdit } from "react-icons/ai";
 import { MdQuestionAnswer } from "react-icons/md";
+import { FaWpforms } from "react-icons/fa";
 
 const DiscussionDiv = styled.div`
   display: flex;
@@ -78,10 +79,24 @@ const DiscussionDiv = styled.div`
       flex: 0.25;
     }
   }
+
+  @media only screen and (max-width: 768px) {
+    padding: 0.3em ;
+    .top-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .bottom-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 `;
 
 const Discussion = (props) => {
   const { discussion, user } = props;
+
+  console.log(window.screen.width);
 
   // useEffect(() => {
   //   console.log(discussion);
@@ -103,8 +118,20 @@ const Discussion = (props) => {
         <span className="children1">
           <FaUserCircle className="icon" /> {discussion.userId}
         </span>
-        <span className="children2" onClick={() => goToDiscussion(discussion._id)}>{discussion.Title}</span>
-        {user && user.discussions.includes(discussion._id) ? (
+        <span
+          className="children2"
+          onClick={() => goToDiscussion(discussion._id)}
+        >
+          {window.screen.width >= 768 ? (
+            <span>{discussion.Title}</span>
+          ) : (
+            <span>
+              <FaWpforms className="icon" />
+              {discussion.Title}
+            </span>
+          )}
+        </span>
+        {user && user.discussions.includes(discussion._id) && window.screen.width >= 768 ? (
           <span className="children3">
             <AiFillEdit className="icon" />
           </span>

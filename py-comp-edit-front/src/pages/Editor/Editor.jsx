@@ -81,6 +81,18 @@ const EditorDiv = styled.div`
       position: relative;
     }
   }
+
+  @media only screen and (max-width: 768px) {
+    .save_dark{
+      margin-left: 0.5em !important;
+      .time-difference{
+        margin-right: 0.5em !important;
+      }
+    }
+  }
+  .display{
+    margin: 0.5em 0em 0.5em 0em !important;
+  }
 `;
 
 const StyledFormControl = styled(Form.Control)`
