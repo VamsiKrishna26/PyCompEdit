@@ -232,36 +232,36 @@ PyCompEditDAL.submissions = async function (
   page = page ? page : 1;
   noOfDocuments = noOfDocuments ? noOfDocuments : 10;
   return connection.getConnection().then(async function (db) {
-    return  search && search !== ""
-    ? db
-        .collection("Submissions")
-        .aggregate(
-          [
-            {
-              $match: {
-                userId: userId,
-                $text: {
-                  $search: search,
+    return search && search !== ""
+      ? db
+          .collection("Submissions")
+          .aggregate(
+            [
+              {
+                $match: {
+                  userId: userId,
+                  $text: {
+                    $search: search,
+                  },
                 },
               },
-            },
-            { $sort: { score: { $meta: "textScore" } } },
+              { $sort: { score: { $meta: "textScore" } } },
+              {
+                $skip: (page - 1) * noOfDocuments,
+              },
+              {
+                $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER,
+              },
+            ],
             {
-              $skip: (page - 1) * noOfDocuments,
-            },
-            {
-              $limit: noOfDocuments ? noOfDocuments : Number.MAX_SAFE_INTEGER,
-            },
-          ],
-          {
-            collation: {
-              locale: "en",
-            },
-          }
-        )
+              collation: {
+                locale: "en",
+              },
+            }
+          )
 
-        .toArray()
-    :db
+          .toArray()
+      : db
           .collection("Submissions")
           .aggregate(
             [
@@ -290,12 +290,12 @@ PyCompEditDAL.submissions = async function (
   });
 };
 
-PyCompEditDAL.noOfPages = async function (noOfDocuments, userId,search) {
+PyCompEditDAL.noOfPages = async function (noOfDocuments, userId, search) {
   noOfDocuments = !noOfDocuments ? 5 : noOfDocuments;
   return connection.getConnection().then(async function (db) {
     let documents = 0;
     try {
-      if(search&&search!==""){
+      if (search && search !== "") {
         documents = (
           await db
             .collection("Submissions")
@@ -305,7 +305,7 @@ PyCompEditDAL.noOfPages = async function (noOfDocuments, userId,search) {
                   userId: userId,
                   $text: {
                     $search: search,
-                  }
+                  },
                 },
               },
               {
@@ -314,8 +314,7 @@ PyCompEditDAL.noOfPages = async function (noOfDocuments, userId,search) {
             ])
             .toArray()
         )[0].Count;
-      }
-      else{
+      } else {
         documents = (
           await db
             .collection("Submissions")
@@ -551,6 +550,33 @@ PyCompEditDAL.verifyJWT = async function (req, res, next) {
       message: "Incorrect Token",
     });
   }
+};
+
+PyCompEditDAL.addPrograms = async function (language, program) {
+  return connection.getConnection().then(async function (db) {
+    await db
+      .collection("Programs")
+      .updateOne(
+        { language: language },
+        { $push: { programs: program } },
+        { upsert: true }
+      );
+    return "Success";
+  });
+};
+
+PyCompEditDAL.programs = async function () {
+  return connection.getConnection().then(async function (db) {
+    let list = await db.collection("Programs").find({}).toArray();
+    for (var i = 0; i < list.length; i++) {
+      list[i].programs = list[i].programs
+        .map((value) => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value)
+        .slice(0, 10);
+    }
+    return list;
+  });
 };
 
 PyCompEditDAL.localOperations = async function () {

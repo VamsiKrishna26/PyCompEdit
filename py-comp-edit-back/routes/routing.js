@@ -164,4 +164,22 @@ routing.post('/addAnswer',function(req,res,next){
   });
 })
 
+routing.get('/programs',function(req,res,next){
+  PyCompEditDAL.programs().then((response) => {
+    res.json(response);
+  })
+  .catch(function (err) {
+    res.status(400).json({ message: err.message });
+  });
+})
+
+routing.post('/addPrograms',function(req,res,next){
+  PyCompEditDAL.addPrograms(req.body.language,req.body.program).then((response) => {
+    res.json(response);
+  })
+  .catch(function (err) {
+    res.status(400).json({ message: err.message });
+  });
+})
+
 module.exports = routing;
