@@ -1,0 +1,44 @@
+$width: 40px;
+$padding: 2px;
+$height: $width / 2 + $padding;
+
+//toggle code begins!
+.switch-wrap {
+    margin-left: 0.5em;
+    cursor: pointer;
+    border: 1px solid black;
+    background: #fff;
+    padding: $padding;
+    width: $width;
+    height: $height;
+    border-radius: $height / 2;
+    input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+}
+.switch {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 0fr 1fr 1fr;
+    transition: 0.2s;
+    //ICYMI, pseudo elements are treated as grid items
+    &::after {
+        content: "";
+        border-radius: 50%;
+        background: #ccc;
+        grid-column: 2;
+        transition: background 0.2s;
+    }
+}
+
+input:checked {
+    + .switch {
+        grid-template-columns: 1fr 1fr 0fr;
+        &::after {
+            background: black;
+        }
+    }
+}

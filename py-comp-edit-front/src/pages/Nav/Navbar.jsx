@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Tab, Tabs } from "react-bootstrap";
+import { Button, Modal, Tab, Tabs, Offcanvas } from "react-bootstrap";
 import styled from "styled-components";
 import Login from "./Login";
 import Register from "./Register";
@@ -18,6 +18,10 @@ import {
   logout,
 } from "../../redux/user/user.actions";
 import { connect } from "react-redux";
+import { FiSettings } from "react-icons/fi";
+import "./Navbar.scss";
+import { useNavigate } from "react-router";
+import { BiMenu } from "react-icons/bi";
 
 const StyledModal = styled(Modal)`
   .close {
@@ -51,7 +55,7 @@ const StyledModalBody = styled(Modal.Body)`
       : `1px solid ${props.colors.theme}`};
   background-color: ${(props) =>
     props.$darkThemeHome ? props.colors.dark : props.colors.white};
-    font-family: ${(props) => props.font} !important;
+  font-family: ${(props) => props.font} !important;
   color: ${(props) =>
     props.$darkThemeHome ? props.colors.white : props.colors.black};
 
@@ -85,9 +89,9 @@ const StyledTabs = styled(Tabs)`
   .nav-link {
     text-decoration-color: none !important;
     color: ${(props) =>
-    props.$darkThemeHome
-      ? props.colors.white
-      : props.colors.black} !important;
+      props.$darkThemeHome
+        ? props.colors.white
+        : props.colors.black} !important;
   }
 
   .nav-link.active {
@@ -101,10 +105,10 @@ const NavbarDiv = styled.div`
   .navbar-div {
     min-height: 60px;
     background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.theme};
+      props.$darkThemeHome ? props.colors.dark : props.colors.theme};
     font-family: ${(props) => props.font} !important;
     color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.white};
+      props.$darkThemeHome ? props.colors.white : props.colors.white};
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -112,6 +116,37 @@ const NavbarDiv = styled.div`
 
     .navbar-item {
       margin: 0.5em;
+      cursor: pointer;
+      font-size: ${(props) => props.font_sizes.heading3};
+    }
+  }
+
+  .icon {
+    font-size: larger;
+    margin: 0.5em;
+    cursor: pointer;
+    transition: transform 0.5s ease-in-out;
+
+    :hover {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const StyledOffcanvas = styled(Offcanvas)`
+  max-height: 300px;
+  max-width: 250px;
+  background-color: ${(props) =>
+    props.$darkThemeHome ? props.colors.dark : props.colors.theme};
+  font-family: ${(props) => props.font} !important;
+  color: ${(props) =>
+    props.$darkThemeHome ? props.colors.white : props.colors.white};
+  .offcanvas-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    .navbar-item {
       cursor: pointer;
       font-size: ${(props) => props.font_sizes.heading3};
     }
@@ -138,9 +173,9 @@ const LogRegModal = ({
         <StyledModalTitle {...props}>Login/Register</StyledModalTitle>
       </StyledModalHeader>
       <StyledModalBody {...props}>
-        {
-          showMessage ? <p>Please login or register before you access the page</p> : null
-        }
+        {showMessage ? (
+          <p>Please login or register before you access the page</p>
+        ) : null}
         <LogRegTabs
           loginForm={loginForm}
           setLoginForm={setLoginForm}
@@ -255,16 +290,14 @@ const Navbar = (props) => {
   const {
     user,
     successMessage,
-    failureMessage,
-    isFetchingLogin,
     fetchLogin,
-    isFetching,
     fetchRegister,
     clearSuccessFailure,
     hideNavbar,
     showModal,
     showMessage,
-    logout
+    logout,
+    setDarkThemeHome,
   } = props;
 
   const [showLogReg, setShowLogReg] = useState(showModal);
@@ -275,6 +308,17 @@ const Navbar = (props) => {
 
   const [registerForm, setRegisterForm] = useState(defaultRegisterForm);
 
+  const [showSettings, setShowSettings] = useState(false);
+
+  const navigate = useNavigate();
+
+  const closeSettings = () => {
+    setShowSettings(false);
+  };
+
+  const openSettings = () => {
+    setShowSettings(true);
+  };
 
   // useEffect(() => {
   //   console.log(user, successMessage, failureMessage, isFetchingLogin);
@@ -285,7 +329,7 @@ const Navbar = (props) => {
       console.log(successMessage);
       if (successMessage) {
         setTimeout(() => {
-          setTabKey("login")
+          setTabKey("login");
         }, 5000);
       }
     }
@@ -293,7 +337,7 @@ const Navbar = (props) => {
 
   useEffect(() => {
     if (user) setShowLogReg(false);
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
     clearSuccessFailure();
@@ -307,27 +351,152 @@ const Navbar = (props) => {
 
   return (
     <NavbarDiv {...props}>
-      {
-        !hideNavbar ?
-          <div className="navbar-div">
-            {!user ? (
-              <span className="navbar-item" onClick={() => setShowLogReg(true)}>
-                Login/Register
+      {!hideNavbar ? (
+        <div className="navbar-div">
+          {window.screen.width >= 768 ? (
+            <div>
+              {!user ? (
+                <span
+                  className="navbar-item"
+                  onClick={() => setShowLogReg(true)}
+                >
+                  Login/Register
+                </span>
+              ) : null}
+              {user ? (
+                <span className="navbar-item">Welcome {user.name}</span>
+              ) : null}
+              <span className="navbar-item" onClick={() => navigate("/editor")}>
+                Editor
               </span>
-            ) : null}
-            {user ? (
-              <span className="navbar-item">
-                Welcome {user.name}
+              <span
+                className="navbar-item"
+                onClick={() => navigate("/discussions")}
+              >
+                Discussions
               </span>
-            ) : null}
-            {user ? (
-              <span className="navbar-item" onClick={() => logout()}>
-                Logout
-              </span>
-            ) : null}
-          </div> :
-          null
-      }
+              {user ? (
+                <span
+                  className="navbar-item"
+                  onClick={() => navigate("/submissions")}
+                >
+                  Submissions
+                </span>
+              ) : null}
+              {user ? (
+                <span className="navbar-item" onClick={() => logout()}>
+                  Logout
+                </span>
+              ) : null}
+              <FiSettings className="icon" onClick={openSettings} />
+              <StyledOffcanvas
+                show={showSettings}
+                onHide={closeSettings}
+                colors={props.colors}
+                font_sizes={props.font_sizes}
+                $darkThemeHome={props.$darkThemeHome}
+                placement="end"
+              >
+                <StyledOffcanvas.Header closeButton>
+                  <StyledOffcanvas.Title>Settings</StyledOffcanvas.Title>
+                </StyledOffcanvas.Header>
+                <StyledOffcanvas.Body>
+                  <div>
+                    <label>Dark Mode:</label>
+                    <label className="switch-wrap">
+                      <input
+                        checked={props.$darkThemeHome}
+                        onChange={() => {
+                          localStorage.setItem(
+                            "dark_theme_home",
+                            JSON.stringify(!props.$darkThemeHome)
+                          );
+                          setDarkThemeHome(!props.$darkThemeHome);
+                        }}
+                        type="checkbox"
+                      />
+                      <div className="switch"></div>
+                    </label>
+                  </div>
+                </StyledOffcanvas.Body>
+              </StyledOffcanvas>
+            </div>
+          ) : (
+            <div>
+              <BiMenu className="icon" onClick={openSettings} />
+              <StyledOffcanvas
+                show={showSettings}
+                onHide={closeSettings}
+                colors={props.colors}
+                font_sizes={props.font_sizes}
+                $darkThemeHome={props.$darkThemeHome}
+                placement="end"
+              >
+                <StyledOffcanvas.Header closeButton>
+                  <StyledOffcanvas.Title>Menu</StyledOffcanvas.Title>
+                </StyledOffcanvas.Header>
+                <StyledOffcanvas.Body>
+                  <div className="offcanvas-body" onClick={closeSettings}>
+                    <div>
+                      <label className="navbar-item">Dark Mode:</label>
+                      <label className="switch-wrap">
+                        <input
+                          checked={props.$darkThemeHome}
+                          onChange={() => {
+                            localStorage.setItem(
+                              "dark_theme_home",
+                              JSON.stringify(!props.$darkThemeHome)
+                            );
+                            setDarkThemeHome(!props.$darkThemeHome);
+                          }}
+                          type="checkbox"
+                        />
+                        <div className="switch"></div>
+                      </label>
+                    </div>
+                    {!user ? (
+                      <span
+                        className="navbar-item"
+                        onClick={() => setShowLogReg(true)}
+                      >
+                        Login/Register
+                      </span>
+                    ) : null}
+                    {user ? (
+                      <span className="navbar-item">Welcome {user.name}</span>
+                    ) : null}
+                    <span
+                      className="navbar-item"
+                      onClick={() => navigate("/editor")}
+                    >
+                      Editor
+                    </span>
+                    <span
+                      className="navbar-item"
+                      onClick={() => navigate("/discussions")}
+                    >
+                      Discussions
+                    </span>
+                    {user ? (
+                      <span
+                        className="navbar-item"
+                        onClick={() => navigate("/submissions")}
+                      >
+                        Submissions
+                      </span>
+                    ) : null}
+                    {user ? (
+                      <span className="navbar-item" onClick={() => logout()}>
+                        Logout
+                      </span>
+                    ) : null}
+                  </div>
+                </StyledOffcanvas.Body>
+              </StyledOffcanvas>
+            </div>
+          )}
+        </div>
+      ) : null}
       {!user ? (
         <LogRegModal
           colors={props.colors}
@@ -363,7 +532,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchLogin: (state) => dispatch(fetchLogin(state)),
   fetchRegister: (state) => dispatch(fetchRegister(state)),
   clearSuccessFailure: () => dispatch(clearSuccessFailure()),
-  logout: () => dispatch(logout())
+  logout: () => dispatch(logout()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

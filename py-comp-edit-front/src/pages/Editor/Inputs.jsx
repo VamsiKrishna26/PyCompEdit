@@ -78,17 +78,17 @@ const Inputs = (props) => {
 
   const onStdinChange = (e) => {
     setStdin(e.target.value);
-    localStorage.setItem("stdin", JSON.stringify(e.target.value));
+    // localStorage.setItem("stdin", JSON.stringify(e.target.value));
   };
 
   const onFileNameChange = (e) => {
     setFileName(e.target.value);
-    localStorage.setItem("fileName", JSON.stringify(e.target.value));
+    // localStorage.setItem("fileName", JSON.stringify(e.target.value));
   };
 
   const onChangeNotes = (e) => {
     setNotes(e.target.value);
-    localStorage.setItem("notes", JSON.stringify(e.target.value));
+    // localStorage.setItem("notes", JSON.stringify(e.target.value));
   };
 
   return (
@@ -102,38 +102,38 @@ const Inputs = (props) => {
       <div className="extras">
         <div className="file_name-stdin">
           <input
-            onBlur={onFileNameChange}
+            onChange={onFileNameChange}
             className="stdin_file-name"
             type="text"
             name="file-name"
             spellCheck="false"
             placeholder="File Name...."
-            defaultValue={fileName}
+            // defaultValue={fileName}
             readOnly={submission ? submission.readOnly : false}
-            // value={fileName}
+            value={fileName}
           />
           <input
-            onBlur={onStdinChange}
+            onChange={onStdinChange}
             className="stdin_file-name"
             type="text"
             name="stdin"
             spellCheck="false"
             placeholder="Input..."
-            defaultValue={stdin}
+            // defaultValue={stdin}
             readOnly={submission ? submission.readOnly : false}
-            // value={stdin}
+            value={stdin}
           />
         </div>
         <div className="notes">
           <textarea
-            onBlur={onChangeNotes}
+            onChange={onChangeNotes}
             className="stdin_file-name notes-area"
             type="text"
             name="notes"
             placeholder="Notes..."
-            defaultValue={notes}
+            // defaultValue={notes}
             readOnly={submission ? submission.readOnly : false}
-            // value={notes}
+            value={notes}
           />
         </div>
       </div>

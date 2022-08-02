@@ -82,12 +82,12 @@ const Toolbar = (props) => {
   ];
 
   const languages_list = {
-    Python: "Python",
-    Java: "Java",
-    JavaScript: "JavaScript",
-    CSharp: "CSharp",
-    Cpp: "C++",
-    C: "C",
+    Python: "Python (3.8.1)",
+    Java: "Java (OpenJDK 13.0.1)",
+    JavaScript: "JavaScript (Node.js 12.14.0)",
+    CSharp: "C# (Mono 6.6.0.161)",
+    Cpp: "C++ (GCC 9.2.0)",
+    C: "C (GCC 9.2.0)",
   };
 
   const languages = (props) => {
@@ -180,7 +180,7 @@ const Toolbar = (props) => {
               disabled={submission ? submission.readOnly : false}
             >
               {window.screen.width >= 768
-                ? `Language: ${language}`
+                ? `Language: ${languages_list[language]}`
                 : `${language}`}
             </StyledDropDownToggle>
 

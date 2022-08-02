@@ -13,6 +13,8 @@ import { createStructuredSelector } from "reselect";
 import { selectUser } from "../../redux/user/user.selecter";
 import { connect } from "react-redux";
 import { useLocation } from "react-router";
+import configData from "../../config.json";
+import SamplePrograms from "./SamplePrograms";
 
 const EditorDiv = styled.div`
   .editor-area {
@@ -80,17 +82,27 @@ const EditorDiv = styled.div`
       width: auto;
       position: relative;
     }
+    .text-editor-sample-programs {
+      display: flex;
+      flex-direction: row;
+      .sample {
+        flex: 0.3;
+      }
+      .editor-text {
+        flex: 1;
+      }
+    }
   }
 
   @media only screen and (max-width: 768px) {
-    .save_dark{
+    .save_dark {
       margin-left: 0.5em !important;
-      .time-difference{
+      .time-difference {
         margin-right: 0.5em !important;
       }
     }
   }
-  .display{
+  .display {
     margin: 0.5em 0em 0.5em 0em !important;
   }
 `;
@@ -124,14 +136,18 @@ const StyledDownloadButton = styled(Button)`
     props.$darkTheme ? props.colors.dark : props.colors.white};
   margin-left: 0.5em;
   border: ${(props) =>
-    props.$darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`};
+    props.$darkTheme
+      ? `1px solid ${props.colors.black}`
+      : `1px solid ${props.colors.theme}`};
   :hover {
     color: ${(props) =>
       props.$darkTheme ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
       props.$darkTheme ? props.colors.white : props.colors.dark};
     border: ${(props) =>
-      props.$darkTheme ? `1px solid ${props.colors.theme}` : `1px solid ${props.colors.black}`};
+      props.$darkTheme
+        ? `1px solid ${props.colors.theme}`
+        : `1px solid ${props.colors.black}`};
   }
 `;
 
@@ -144,9 +160,9 @@ const Editor = (props) => {
     setDarkTheme($darkThemeHome);
   }, []);
 
-  useEffect(() => {
-    console.log(location.state);
-  }, [location.state]);
+  // useEffect(() => {
+  //   console.log(location.state);
+  // }, [location.state]);
 
   // useEffect(()=>{console.log(user.userId)},[user]);
 
@@ -165,24 +181,25 @@ const Editor = (props) => {
     JSON.parse(localStorage.getItem("font_size")) || "16px"
   );
 
-  let [language, setLanguage] = useState(location.state
-    ? location.state.language
-    :JSON.parse(localStorage.getItem("language")) || "Python"
+  let [language, setLanguage] = useState(
+    location.state
+      ? location.state.language
+      : JSON.parse(localStorage.getItem("language")) || "Python (3.8.1)"
   );
 
   let [darkTheme, setDarkTheme] = useState(
     JSON.parse(localStorage.getItem("dark_theme")) || false
   );
 
-  let [result, setResult] = useState(
-    location.state ? location.state : {}
-  );
+  let [result, setResult] = useState(location.state ? location.state : {});
 
   let [isFetching, setIsFetching] = useState(false);
 
   let [uploadFileText, setUploadFileText] = useState(null);
 
   let [timeDifference, setTimeDifference] = useState(0);
+
+  let [sampleProgram,setSampleProgram]=useState(null);
 
   let [stdin, setStdin] = useState(
     location.state
@@ -241,7 +258,7 @@ const Editor = (props) => {
 
   const fetchSubmission = () => {
     setIsFetching(true);
-    fetch("http://localhost:1020/submit", {
+    fetch(configData.PORT + "/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -282,7 +299,10 @@ const Editor = (props) => {
 
   useEffect(() => {
     let code = JSON.parse(localStorage.getItem("code"));
-    if (location.state&&location.state.language===language) {
+    if(sampleProgram){
+      setUploadFileText(sampleProgram);
+    }
+    else if (location.state && location.state.language === language) {
       setUploadFileText(location.state.source_code);
     } else if (code && code[language]) {
       code[language] = code[language]
@@ -317,7 +337,7 @@ const Editor = (props) => {
         );
       }
     }
-  }, [language]);
+  }, [language,sampleProgram]);
 
   const downloadFile = () => {
     const element = document.createElement("a");
@@ -387,7 +407,7 @@ const Editor = (props) => {
             changeFontWeight={changeFontWeight}
             changeFontFamily={changeFontFamily}
             changeLanguage={changeLanguage}
-            submission={location.state?location.state:null}
+            submission={location.state ? location.state : null}
             {...props}
           />
           <div className="save_dark">
@@ -410,33 +430,50 @@ const Editor = (props) => {
             </div>
             <span className="time-difference">{`Saved ${timeDifference} seconds ago...`}</span>
           </div>
-          <TextEditor
-            uploadFileText={uploadFileText}
-            fontFamily={fontFamily}
-            fontSize={fontSize}
-            darkTheme={darkTheme}
-            fontWeight={fontWeight}
-            codeStringChange={codeStringChange}
-            result={result}
-            setTimeDifference={setTimeDifference}
-            language={language}
-            submission={location.state?location.state:null}
-            {...props}
-          />
-          <Inputs
-            fontFamily={fontFamily}
-            fontSize={fontSize}
-            darkTheme={darkTheme}
-            fontWeight={fontWeight}
-            setStdin={setStdin}
-            setFileName={setFileName}
-            setNotes={setNotes}
-            stdin={stdin}
-            fileName={fileName}
-            notes={notes}
-            submission={location.state?location.state:null}
-            {...props}
-          />
+          <div className="text-editor-sample-programs">
+            {window.screen.width>=768?<div className="sample">
+              <SamplePrograms
+                {...props}
+                fontFamily={fontFamily}
+                fontSize={fontSize}
+                darkTheme={darkTheme}
+                fontWeight={fontWeight}
+                setLanguage={setLanguage}
+                setFileName={setFileName}
+                setNotes={setNotes}
+                setSampleProgram={setSampleProgram}
+              />
+            </div>:null}
+            <div className="editor-text">
+              <TextEditor
+                uploadFileText={uploadFileText}
+                fontFamily={fontFamily}
+                fontSize={fontSize}
+                darkTheme={darkTheme}
+                fontWeight={fontWeight}
+                codeStringChange={codeStringChange}
+                result={result}
+                setTimeDifference={setTimeDifference}
+                language={language}
+                submission={location.state ? location.state : null}
+                {...props}
+              />
+              <Inputs
+                fontFamily={fontFamily}
+                fontSize={fontSize}
+                darkTheme={darkTheme}
+                fontWeight={fontWeight}
+                setStdin={setStdin}
+                setFileName={setFileName}
+                setNotes={setNotes}
+                stdin={stdin}
+                fileName={fileName}
+                notes={notes}
+                submission={location.state ? location.state : null}
+                {...props}
+              />
+            </div>
+          </div>
         </div>
         <RunButton
           fontFamily={fontFamily}
@@ -444,7 +481,7 @@ const Editor = (props) => {
           darkTheme={darkTheme}
           fontWeight={fontWeight}
           fetchSubmission={fetchSubmission}
-          submission={location.state?location.state:null}
+          submission={location.state ? location.state : null}
           {...props}
         />
         <div className="display">
@@ -456,7 +493,7 @@ const Editor = (props) => {
               darkTheme={darkTheme}
               fontWeight={fontWeight}
               result={result}
-              submission={location.state?location.state:null}
+              submission={location.state ? location.state : null}
               {...props}
             />
           ) : (
