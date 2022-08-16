@@ -102,7 +102,7 @@ const StyledDropDownToggle = styled(Dropdown.Toggle)`
     color: ${(props) =>
       props.$darkThemeHome ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.white : props.colors.dark};
+      props.$darkThemeHome ? props.colors.white : props.colors.theme};
   }
 `;
 

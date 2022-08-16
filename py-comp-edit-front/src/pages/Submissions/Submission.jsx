@@ -75,20 +75,11 @@ const StyledDownloadButton = styled(Button)`
     color: ${(props) =>
     props.$darkThemeHome ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.dark};
+    props.$darkThemeHome ? props.colors.white : props.colors.theme};
     border: ${(props) =>
     props.$darkThemeHome ? `1px solid ${props.colors.theme}` : ""};
   }
 `;
-
-const language_dict = {
-  "Python (3.8.1)": "Python",
-  "Java (OpenJDK 13.0.1)": "Java",
-  "JavaScript (Node.js 12.14.0)": "JavaScript",
-  "C# (Mono 6.6.0.161)": "CSharp",
-  "C++ (Clang 7.0.1)": "Cpp",
-  "C (GCC 7.4.0)": "C",
-};
 
 const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
   const navigate = useNavigate();
@@ -98,7 +89,7 @@ const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
       state: {
         ...props.submission,
         readOnly: true,
-        language: language_dict[props.submission.language.name],
+        language: props.submission.language.name,
       },
     });
   };
@@ -108,7 +99,7 @@ const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
       state: {
         ...props.submission,
         readOnly: false,
-        language: language_dict[props.submission.language.name],
+        language: props.submission.language.name,
       },
     });
   };

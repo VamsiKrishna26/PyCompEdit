@@ -96,12 +96,6 @@ const DiscussionDiv = styled.div`
 const Discussion = (props) => {
   const { discussion, user } = props;
 
-  console.log(window.screen.width);
-
-  // useEffect(() => {
-  //   console.log(discussion);
-  // }, [discussion]);
-
   const navigate = useNavigate();
 
   const goToDiscussion = (_id) => {

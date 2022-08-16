@@ -45,15 +45,14 @@ const RunButtonDiv = styled.div`
   }
 
   @media only screen and (max-width: 768px) {
-    .run-button{
+    .run-button {
       margin-right: 0.5em !important;
     }
   }
 `;
 
 const RunButton = (props) => {
-  const { fontFamily, fontSize, darkTheme, fetchSubmission, submission } =
-    props;
+  const { fontFamily, fontSize, darkTheme, fetchSubmission } = props;
 
   return (
     <RunButtonDiv
@@ -62,11 +61,9 @@ const RunButton = (props) => {
       darkTheme={darkTheme}
     >
       <div className="run-button-div">
-        {submission && submission.readOnly ? null : (
-          <button onClick={fetchSubmission} className="run-button">
-            Run
-          </button>
-        )}
+        <button onClick={fetchSubmission} className="run-button">
+          Run
+        </button>
       </div>
     </RunButtonDiv>
   );

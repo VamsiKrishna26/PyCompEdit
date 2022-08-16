@@ -143,7 +143,7 @@ const StyledDownloadButton = styled(Button)`
     color: ${(props) =>
       props.$darkTheme ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-      props.$darkTheme ? props.colors.white : props.colors.dark};
+      props.$darkTheme ? props.colors.white : props.colors.theme};
     border: ${(props) =>
       props.$darkTheme
         ? `1px solid ${props.colors.theme}`
@@ -159,10 +159,6 @@ const Editor = (props) => {
   useEffect(() => {
     setDarkTheme($darkThemeHome);
   }, []);
-
-  // useEffect(() => {
-  //   console.log(location.state);
-  // }, [location.state]);
 
   // useEffect(()=>{console.log(user.userId)},[user]);
 
@@ -187,8 +183,20 @@ const Editor = (props) => {
       : JSON.parse(localStorage.getItem("language")) || "Python (3.8.1)"
   );
 
+  useEffect(() => {
+    console.log(
+      location.state
+        ? location.state.language
+        : JSON.parse(localStorage.getItem("language")) || "Python (3.8.1)"
+    );
+  }, [language]);
+
   let [darkTheme, setDarkTheme] = useState(
     JSON.parse(localStorage.getItem("dark_theme")) || false
+  );
+
+  let [readOnly, setReadOnly] = useState(
+    location.state ? location.state.readOnly : true
   );
 
   let [result, setResult] = useState(location.state ? location.state : {});
@@ -199,7 +207,7 @@ const Editor = (props) => {
 
   let [timeDifference, setTimeDifference] = useState(0);
 
-  let [sampleProgram,setSampleProgram]=useState(null);
+  let [sampleProgram, setSampleProgram] = useState(null);
 
   let [stdin, setStdin] = useState(
     location.state
@@ -219,6 +227,7 @@ const Editor = (props) => {
       : JSON.parse(localStorage.getItem("notes")) || ""
   );
 
+  
   const codeStringChange = (code) => {
     setCodeString(code.map((node) => Node.string(node)).join("\n"));
   };
@@ -283,7 +292,20 @@ const Editor = (props) => {
       });
   };
 
+  const copyToClipboard=()=>{
+    navigator.clipboard.writeText(codeString);
+  }
+
   const uploadFile = async (e) => {
+    setUploadFileText("");
+    let file_extension = {
+      py: "Python (3.8.1)",
+      java: "Java (OpenJDK 13.0.1)",
+      js: "JavaScript (Node.js 12.14.0)",
+      cs: "CSharp (Mono 6.6.0.161)",
+      cpp: "Cpp (GCC 9.2.0)",
+      c: "C (GCC 9.2.0)",
+    };
     try {
       e.preventDefault();
       const reader = new FileReader();
@@ -292,6 +314,9 @@ const Editor = (props) => {
         setUploadFileText(text);
       };
       reader.readAsText(e.target.files[0]);
+      var file = e.target.files[0];
+      var fileName = file.name;
+      setLanguage(file_extension[fileName.split(".").pop()]);
     } catch (err) {
       console.log(err);
     }
@@ -299,10 +324,9 @@ const Editor = (props) => {
 
   useEffect(() => {
     let code = JSON.parse(localStorage.getItem("code"));
-    if(sampleProgram){
-      setUploadFileText(sampleProgram);
-    }
-    else if (location.state && location.state.language === language) {
+    if (sampleProgram && sampleProgram.language === language) {
+      setUploadFileText(sampleProgram.source_code);
+    } else if (location.state && location.state.language === language) {
       setUploadFileText(location.state.source_code);
     } else if (code && code[language]) {
       code[language] = code[language]
@@ -313,43 +337,43 @@ const Editor = (props) => {
       }
       setUploadFileText(code[language]);
     } else {
-      if (language === "Java") {
+      if (language === "Java (OpenJDK 13.0.1)") {
         setUploadFileText(
           "public class Main{\n    public static void main(String[] args){\n        //Type your code here. Main class should be present.\n    }\n}"
         );
-      } else if (language === "Python") {
+      } else if (language === "Python (3.8.1)") {
         setUploadFileText("#Type your code here\n\nprint('Hello World!!!')");
-      } else if (language === "JavaScript") {
+      } else if (language === "JavaScript (Node.js 12.14.0)") {
         setUploadFileText(
           '//Type your code here\n\nconsole.log("Hello World!!!")'
         );
-      } else if (language === "CSharp") {
+      } else if (language === "C# (Mono 6.6.0.161)") {
         setUploadFileText(
           'using System;\nnamespace Main{\n    class Program{\n        static void Main(string[] args){\n            Console.WriteLine("Hello World!");\n        }\n    }\n}'
         );
-      } else if (language === "Cpp") {
+      } else if (language === "C++ (GCC 9.2.0)") {
         setUploadFileText(
           '#include <iostream>\nint main() {\n    std::cout << "Hello World!";\n    return 0;\n}'
         );
-      } else if (language === "C") {
+      } else if (language === "C (GCC 9.2.0)") {
         setUploadFileText(
           '#include <stdio.h>\nint main() {\n    printf("Hello, World!");\n    return 0;\n}'
         );
       }
     }
-  }, [language,sampleProgram]);
+  }, [language, sampleProgram]);
 
   const downloadFile = () => {
     const element = document.createElement("a");
     const file = new Blob([codeString], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
     let file_extension = {
-      Python: ".py",
-      Java: ".java",
-      JavaScript: ".js",
-      CSharp: ".cs",
-      Cpp: ".cpp",
-      C: ".c",
+      "Python (3.8.1)": ".py",
+      "Java (OpenJDK 13.0.1)": ".java",
+      "JavaScript (Node.js 12.14.0)": ".js",
+      "C# (Mono 6.6.0.161)": ".cs",
+      "C++ (GCC 9.2.0)": ".cpp",
+      "C (GCC 9.2.0)": ".c",
     };
     element.download = `${fileName}${file_extension[language]}`;
     document.body.appendChild(element);
@@ -394,6 +418,31 @@ const Editor = (props) => {
               >
                 {window.screen.width >= 768 ? `Download the file` : `Download`}
               </StyledDownloadButton>
+              {readOnly ? (
+                <StyledDownloadButton
+                  variant="custom"
+                  fontFamily={fontFamily}
+                  $darkTheme={darkTheme}
+                  onClick={() => {
+                    setReadOnly(false);
+                  }}
+                  colors={props.colors}
+                >
+                  {window.screen.width >= 768 ? `Edit the file` : `Edit`}
+                </StyledDownloadButton>
+              ) : (
+                <StyledDownloadButton
+                  variant="custom"
+                  fontFamily={fontFamily}
+                  $darkTheme={darkTheme}
+                  onClick={() => {
+                    setReadOnly(true);
+                  }}
+                  colors={props.colors}
+                >
+                  {window.screen.width >= 768 ? `Lock the edit` : `Lock`}
+                </StyledDownloadButton>
+              )}
             </Form.Group>
           </div>
           <Toolbar
@@ -407,7 +456,7 @@ const Editor = (props) => {
             changeFontWeight={changeFontWeight}
             changeFontFamily={changeFontFamily}
             changeLanguage={changeLanguage}
-            submission={location.state ? location.state : null}
+            readOnly={readOnly}
             {...props}
           />
           <div className="save_dark">
@@ -431,19 +480,21 @@ const Editor = (props) => {
             <span className="time-difference">{`Saved ${timeDifference} seconds ago...`}</span>
           </div>
           <div className="text-editor-sample-programs">
-            {window.screen.width>=768?<div className="sample">
-              <SamplePrograms
-                {...props}
-                fontFamily={fontFamily}
-                fontSize={fontSize}
-                darkTheme={darkTheme}
-                fontWeight={fontWeight}
-                setLanguage={setLanguage}
-                setFileName={setFileName}
-                setNotes={setNotes}
-                setSampleProgram={setSampleProgram}
-              />
-            </div>:null}
+            {window.screen.width >= 768 ? (
+              <div className="sample">
+                <SamplePrograms
+                  {...props}
+                  fontFamily={fontFamily}
+                  fontSize={fontSize}
+                  darkTheme={darkTheme}
+                  fontWeight={fontWeight}
+                  setLanguage={setLanguage}
+                  setFileName={setFileName}
+                  setNotes={setNotes}
+                  setSampleProgram={setSampleProgram}
+                />
+              </div>
+            ) : null}
             <div className="editor-text">
               <TextEditor
                 uploadFileText={uploadFileText}
@@ -455,7 +506,8 @@ const Editor = (props) => {
                 result={result}
                 setTimeDifference={setTimeDifference}
                 language={language}
-                submission={location.state ? location.state : null}
+                readOnly={readOnly}
+                copyToClipboard={copyToClipboard}
                 {...props}
               />
               <Inputs
@@ -469,21 +521,22 @@ const Editor = (props) => {
                 stdin={stdin}
                 fileName={fileName}
                 notes={notes}
-                submission={location.state ? location.state : null}
+                readOnly={readOnly}
                 {...props}
               />
             </div>
           </div>
         </div>
-        <RunButton
-          fontFamily={fontFamily}
-          fontSize={fontSize}
-          darkTheme={darkTheme}
-          fontWeight={fontWeight}
-          fetchSubmission={fetchSubmission}
-          submission={location.state ? location.state : null}
-          {...props}
-        />
+        {!readOnly ? (
+          <RunButton
+            fontFamily={fontFamily}
+            fontSize={fontSize}
+            darkTheme={darkTheme}
+            fontWeight={fontWeight}
+            fetchSubmission={fetchSubmission}
+            {...props}
+          />
+        ) : null}
         <div className="display">
           {!isFetching ? (
             <DisplayResult
@@ -493,7 +546,6 @@ const Editor = (props) => {
               darkTheme={darkTheme}
               fontWeight={fontWeight}
               result={result}
-              submission={location.state ? location.state : null}
               {...props}
             />
           ) : (

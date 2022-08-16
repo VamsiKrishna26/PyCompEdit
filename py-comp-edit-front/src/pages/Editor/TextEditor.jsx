@@ -13,12 +13,14 @@ import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
 import { css } from "@emotion/css";
+import { BsSearch } from "react-icons/bs";
+import { TiTimes } from "react-icons/ti";
+import { IoCopy } from "react-icons/io5";
 
 const TextEditorDiv = styled.div`
   .text-editor-div {
     display: flex;
-    flex-direction: row;
-    overflow-y: auto;
+    flex-direction: column;
     border-radius: 15px 15px 15px 15px;
     border: ${(props) =>
       props.darkTheme
@@ -39,23 +41,55 @@ const TextEditorDiv = styled.div`
     margin-top: 0.5em;
     margin-bottom: 1em;
 
-    .line-numbers {
-      padding-left: 0.5em;
-      flex: 0.05;
+    .stdin_file-name {
+      align-self: flex-end;
+      border-radius: 15px 15px 15px 15px;
+      width: 350px;
+      border: ${(props) =>
+        props.darkTheme
+          ? `1px solid ${props.colors.black}`
+          : `1px solid ${props.colors.theme}`};
+      padding: 0.3em;
+      background-color: ${(props) =>
+        props.darkTheme ? props.colors.dark : props.colors.white};
+      font-family: ${(props) => props.fontFamily};
+      font-size: ${(props) => props.fontSize};
+      font-weight: ${(props) => props.fontWeight};
+      color: ${(props) =>
+        props.darkTheme ? props.colors.white : props.colors.black};
+      margin: 0.3em;
     }
 
-    .text-editor {
-      flex: 0.95;
+    .text-editor-div-div {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
-      position: relative;
+      overflow-y: auto;
+      .line-numbers {
+        padding-left: 0.5em;
+        flex: 0.05;
+      }
 
-      .text-area {
-        border: 1px solid red;
+      .text-editor {
+        flex: 0.95;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        position: relative;
+        /* border:1px solid red; */
+
+        .text-area {
+          /* border: 1px solid red; */
+        }
       }
     }
+  }
+
+  .icon {
+    color: ${(props) =>
+      props.$darkThemeHome ? props.colors.white : props.colors.theme};
+    cursor: pointer;
+    margin: 0.3em;
+    font-size: larger;
   }
 
   @media only screen and (max-width: 768px) {
@@ -108,8 +142,9 @@ const TextEditor = (props) => {
     fontWeight,
     uploadFileText,
     setTimeDifference,
-    submission,
+    readOnly,
     // language
+    copyToClipboard
   } = props;
 
   const language = props.language || "python";
@@ -126,12 +161,16 @@ const TextEditor = (props) => {
     Math.floor(new Date().getTime())
   );
 
+  let [search, setSearch] = useState("");
+
   // useEffect(()=>{console.log(timer)},[timer]);
+
+  let [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setPresentTimer((presentTimer) => presentTimer + 5000);
-    }, 5000);
+      setPresentTimer((presentTimer) => presentTimer + 15000);
+    }, 15000);
     return () => clearInterval(interval);
   }, []);
 
@@ -166,6 +205,8 @@ const TextEditor = (props) => {
     }
   }, [uploadFileText]);
 
+  
+
   let [code, setCode] = useState([
     {
       type: "paragraph",
@@ -175,7 +216,16 @@ const TextEditor = (props) => {
 
   let [noOfLines, setNoOfLines] = useState(0);
 
-  const Leaf = ({ attributes, children, leaf }) => {
+  const languages_list = {
+    "Python (3.8.1)": "Python",
+    "Java (OpenJDK 13.0.1)": "Java",
+    "JavaScript (Node.js 12.14.0)": "JavaScript",
+    "C# (Mono 6.6.0.161)": "CSharp",
+    "C++ (GCC 9.2.0)": "Cpp",
+    "C (GCC 9.2.0)": "C",
+  };
+
+  const Leaf = useCallback(({ attributes, children, leaf }) => {
     return (
       <span
         {...attributes}
@@ -217,12 +267,21 @@ const TextEditor = (props) => {
           css`
             color: ${props.darkTheme ? "#dbdba3" : "#162f59"};
           `}
+          ${leaf.searchHighlight &&
+          css`
+            background-color: ${props.darkTheme ? "white" : props.colors.theme};
+            color: ${props.darkTheme ? "black" : "white"};
+          `}
         `}
       >
         {children}
       </span>
     );
-  };
+  },[language,search]);
+
+  useEffect(() => {
+    if (!showSearch) setSearch("");
+  }, [showSearch]);
 
   const getLength = (token) => {
     if (typeof token === "string") {
@@ -240,13 +299,14 @@ const TextEditor = (props) => {
 
   const decorate = useCallback(
     ([node, path]) => {
+      // console.log("called");
       const ranges = [];
       if (!Text.isText(node)) {
         return ranges;
       }
       const tokens = Prism.tokenize(
         node.text,
-        Prism.languages[language.toLowerCase()]
+        Prism.languages[languages_list[language].toLowerCase()]
       );
       let start = 0;
       for (let token = 0; token < tokens.length; token++) {
@@ -261,10 +321,24 @@ const TextEditor = (props) => {
         }
         start = end;
       }
-
+      if (search && search.length !== 0) {
+        const { text } = node;
+        const parts = text.split(search);
+        let offset = 0;
+        parts.forEach((part, i) => {
+          if (i !== 0) {
+            ranges.push({
+              anchor: { path, offset: offset - search.length },
+              focus: { path, offset },
+              searchHighlight: true,
+            });
+          }
+          offset = offset + part.length + search.length;
+        });
+      }
       return ranges;
     },
-    [language]
+    [language, search]
   );
 
   const onKeyDown = (e) => {
@@ -281,12 +355,13 @@ const TextEditor = (props) => {
       try {
         let prev_node_text = Editor.node(editor, editor.selection)[0].text;
         let leading_spaces = prev_node_text.search(/\S|$/);
-        if (leading_spaces === 0) {
+        if (leading_spaces === 0||leading_spaces === 1) {
           var count = 0;
           var index = 0;
           while (prev_node_text.charAt(index++) === "\t") {
             count++;
           }
+          console.log(count)
           leading_spaces = count * 4;
         }
         if (
@@ -344,6 +419,9 @@ const TextEditor = (props) => {
           [language]: editor.children,
         })
       );
+    } else if ((e.ctrlKey || e.metaKey) && charCode === "f") {
+      e.preventDefault();
+      setShowSearch(!showSearch);
     }
   };
 
@@ -364,6 +442,8 @@ const TextEditor = (props) => {
   useEffect(() => {
     codeStringChange(code);
   }, [code]);
+
+  useEffect(()=>{console.log("called")},[])
 
   useEffect(() => {
     setCode(editor.children);
@@ -401,30 +481,49 @@ const TextEditor = (props) => {
       {...props}
     >
       <div className="text-editor-div">
-        <div className="line-numbers">{line_numbers()}</div>
-        <div className="text-editor">
-          <Slate className="text-area" editor={editor} value={code}>
-            <Editable
-              decorate={decorate}
-              renderLeaf={(props) => <Leaf {...props} />}
-              onKeyDown={onKeyDown}
-              placeholder="Code"
-              spellCheck="false"
-              onBlur={saveCode}
-              readOnly={submission ? submission.readOnly : false}
-            ></Editable>
-            {submission && submission.readOnly ? null : (
-              <StyledDownloadButton
-                variant="custom"
-                fontFamily={fontFamily}
-                $darkTheme={darkTheme}
-                onClick={saveCode}
-                colors={props.colors}
-              >
-                {window.screen.width >= 768 ? `Save the code` : `Save`}
-              </StyledDownloadButton>
-            )}
-          </Slate>
+        {showSearch ? (
+          <input
+            onChange={(e) => setSearch(e.target.value)}
+            className="stdin_file-name"
+            type="text"
+            name="search"
+            spellCheck="false"
+            placeholder="Search"
+            value={search}
+          />
+        ) : null}
+        <div className="text-editor-div-div">
+          <div className="line-numbers">{line_numbers()}</div>
+          <div className="text-editor">
+            <Slate className="text-area" editor={editor} value={code}>
+              <Editable
+                decorate={decorate}
+                renderLeaf={(props) => <Leaf {...props} />}
+                onKeyDown={onKeyDown}
+                placeholder="Code"
+                spellCheck="false"
+                onBlur={saveCode}
+                readOnly={readOnly}
+              ></Editable>
+              {readOnly ? null : (
+                <StyledDownloadButton
+                  variant="custom"
+                  fontFamily={fontFamily}
+                  $darkTheme={darkTheme}
+                  onClick={saveCode}
+                  colors={props.colors}
+                >
+                  {window.screen.width >= 768 ? `Save the code` : `Save`}
+                </StyledDownloadButton>
+              )}
+            </Slate>
+          </div>
+          {showSearch ? (
+            <TiTimes className="icon" onClick={() => setShowSearch(false)} />
+          ) : (
+            <BsSearch className="icon" onClick={() => setShowSearch(true)} />
+          )}
+          <IoCopy className="icon" onClick={()=>copyToClipboard()}/>
         </div>
       </div>
     </TextEditorDiv>

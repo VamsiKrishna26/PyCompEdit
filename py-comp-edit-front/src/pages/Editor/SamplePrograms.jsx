@@ -11,7 +11,7 @@ const SampleProgramsDiv = styled.div`
       ? `1px solid ${props.colors.black}`
       : `1px solid ${props.colors.theme}`};
   padding: 0.5em;
-  margin:0.5em;
+  margin: 0.5em;
   font-family: ${(props) => props.fontFamily};
   font-weight: ${(props) => props.fontWeight};
   color: ${(props) =>
@@ -31,32 +31,38 @@ const SampleProgramsDiv = styled.div`
 
   .accordion {
     font-family: ${(props) => props.font};
-    --bs-accordion-border-color: ${(props) =>
-      props.darkTheme
-        ? `${props.colors.black}`
-        : `${props.colors.theme}`} !important;
-    --bs-accordion-color: ${(props) =>
-      props.darkTheme
-        ? props.colors.white
-        : props.colors.black} !important;
-    --bs-accordion-bg: ${(props) =>
-      props.darkTheme ? props.colors.dark : props.colors.white} !important;
+
     .accordion-body {
       /* border: 1px solid red; */
       padding: 0.5em !important;
+      background-color: ${(props) =>
+        props.darkTheme ? props.colors.dark : props.colors.white} !important;
+      color: ${(props) =>
+        props.darkTheme ? props.colors.white : props.colors.black} !important;
+      border-color: ${(props) =>
+        props.darkTheme
+          ? `${props.colors.black}`
+          : `${props.colors.theme}`} !important;
     }
     .accordion-button {
-        padding: 0.5em !important;
+      padding: 0.5em !important;
       color: ${(props) =>
         props.darkTheme
           ? `${props.colors.white}`
           : `${props.colors.black}`} !important;
+      background-color: ${(props) =>
+        props.darkTheme ? props.colors.dark : props.colors.white} !important;
       :not(.collapsed) {
-        color: ${(props) => props.colors.black} !important;
+        background-color: ${(props) =>
+          props.darkTheme ? props.colors.white : props.colors.theme} !important;
+        color: ${(props) =>
+        props.darkTheme
+          ? `${props.colors.black}`
+          : `${props.colors.white}`} !important;
       }
     }
-    .accordion-item{
-        margin-top: 0.5em;
+    .accordion-item {
+      margin-top: 0.5em;
     }
   }
 
@@ -113,10 +119,10 @@ const SamplePrograms = (props) => {
   //   }, [programs]);
 
   const setProgram = (language, program) => {
-    setLanguage(language);
+    setLanguage(languages_list[language]);
     setFileName(program.title);
     setNotes(program.notes);
-    setSampleProgram(program.source_code);
+    setSampleProgram({ ...program, language: languages_list[language] });
     // console.log(languages_list[language],program.title,program.notes,program.source_code)
   };
 

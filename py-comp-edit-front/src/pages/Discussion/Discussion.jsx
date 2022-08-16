@@ -106,23 +106,32 @@ const DiscussionDiv = styled.div`
 
   .accordion {
     font-family: ${(props) => props.font};
-    --bs-accordion-border-color: ${(props) =>
-      props.$darkThemeHome
-        ? `${props.colors.black}`
-        : `${props.colors.theme}`} !important;
-    --bs-accordion-color: ${(props) =>
-      props.$darkThemeHome
-        ? props.colors.white
-        : props.colors.black} !important;
-    --bs-accordion-bg: ${(props) =>
-      props.$darkThemeHome ? props.colors.dark : props.colors.white} !important;
+
+    .accordion-body {
+      /* border: 1px solid red; */
+      background-color: ${(props) =>
+        props.$darkThemeHome ? props.colors.dark : props.colors.white} !important;
+      color: ${(props) =>
+        props.$darkThemeHome ? props.colors.white : props.colors.black} !important;
+      border-color: ${(props) =>
+        props.$darkThemeHome
+          ? `${props.colors.black}`
+          : `${props.colors.theme}`} !important;
+    }
     .accordion-button {
       color: ${(props) =>
         props.$darkThemeHome
           ? `${props.colors.white}`
           : `${props.colors.black}`} !important;
+      background-color: ${(props) =>
+        props.$darkThemeHome ? props.colors.dark : props.colors.white} !important;
       :not(.collapsed) {
-        color: ${(props) => props.colors.black} !important;
+        background-color: ${(props) =>
+          props.$darkThemeHome ? props.colors.white : props.colors.theme} !important;
+        color: ${(props) =>
+        props.$darkThemeHome
+          ? `${props.colors.black}`
+          : `${props.colors.white}`} !important;
       }
     }
   }
@@ -161,7 +170,7 @@ const StyledDropDownToggle = styled(Dropdown.Toggle)`
     color: ${(props) =>
       props.$darkTheme ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-      props.$darkTheme ? props.colors.white : props.colors.dark};
+      props.$darkTheme ? props.colors.white : props.colors.theme};
   }
   margin-bottom: 0.5em;
 `;
@@ -209,6 +218,10 @@ const Discussion = (props) => {
   useEffect(() => {
     if (discussion) setAnswers(discussion.Answers);
   }, [discussion]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   useEffect(() => {
     if (discussion)

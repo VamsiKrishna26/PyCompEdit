@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Popover, OverlayTrigger } from "react-bootstrap";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import styled from "styled-components";
-import { selectFailureMessage, selectSuccessMessage } from "../../redux/user/user.selecter";
+import {
+  selectFailureMessage,
+  selectSuccessMessage,
+} from "../../redux/user/user.selecter";
 
 const LoginDiv = styled.div`
   display: flex;
@@ -18,7 +21,7 @@ const LoginDiv = styled.div`
     align-items: center;
     justify-content: space-between;
     color: ${(props) =>
-      props.$darkThemeHome ? props.colors.white : props.colors.black};
+      props.$darkThemeHome ? props.colors.white : props.colors.theme};
 
     input {
       border-radius: 15px 15px 15px 15px;
@@ -30,7 +33,7 @@ const LoginDiv = styled.div`
     }
   }
 
-  .failure-message{
+  .failure-message {
     color: red;
   }
 `;
@@ -44,9 +47,11 @@ const popover = (value) => (
 );
 
 const Login = (props) => {
-  const { loginForm, setLoginForm,successMessage,failureMessage } = props;
+  const { loginForm, setLoginForm, successMessage, failureMessage } = props;
 
-  
+  console.log(JSON.parse(localStorage.getItem('login_form')),loginForm);
+
+  let [remember, setRemember] = useState(false);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -87,6 +92,16 @@ const Login = (props) => {
           }));
     }
   };
+
+  useEffect(()=>{
+    if(remember){
+      console.log(loginForm);
+      localStorage.setItem('login_form',JSON.stringify(loginForm));
+    }
+    else{
+      localStorage.removeItem('login_form');
+    }
+  },[remember,loginForm])
 
   return (
     <LoginDiv {...props}>
@@ -140,22 +155,27 @@ const Login = (props) => {
           </tr>
           <tr>
             <td>
-              <InputDiv type="checkbox" id="remember" />
+              <InputDiv
+                type="checkbox"
+                id="remember"
+                value={remember}
+                onChange={() => setRemember(!remember)}
+              />
               <label className="checkbox-label">Remember Me</label>
             </td>
           </tr>
         </tbody>
       </Table>
-      {
-        failureMessage?<span className="failure-message">{failureMessage}</span>:null
-      }
+      {failureMessage ? (
+        <span className="failure-message">{failureMessage}</span>
+      ) : null}
     </LoginDiv>
   );
 };
 
-const mapStateToProps=createStructuredSelector({
-  successMessage:selectSuccessMessage,
-  failureMessage:selectFailureMessage
-})
+const mapStateToProps = createStructuredSelector({
+  successMessage: selectSuccessMessage,
+  failureMessage: selectFailureMessage,
+});
 
 export default connect(mapStateToProps)(Login);

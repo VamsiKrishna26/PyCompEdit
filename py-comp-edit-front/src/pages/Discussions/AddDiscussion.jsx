@@ -63,7 +63,7 @@ const StyledButton = styled(Button)`
     color: ${(props) =>
       props.$darkTheme ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-      props.$darkTheme ? props.colors.white : props.colors.dark};
+      props.$darkTheme ? props.colors.white : props.colors.theme};
     border: ${(props) =>
       props.$darkTheme
         ? `1px solid ${props.colors.theme}`

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Editor from "./pages/Editor/Editor";
 import "./App.scss";
@@ -21,6 +21,32 @@ const AppDiv = styled.div`
     min-height: 100vh;
   }
 
+  *::-webkit-scrollbar {
+    width: 10px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+  *::-webkit-scrollbar-track {
+    background-color: ${(props) =>
+      props.$darkThemeHome ? props.colors.dark : props.colors.white};
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    border-radius: 15px 15px 15px 15px;
+    border: 0px !important;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: ${(props) =>
+      props.$darkThemeHome ? props.colors.white : props.colors.theme};
+    border-radius: 15px 15px 15px 15px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+
+    /* :hover {
+      opacity: 0.8;
+      background: ${(props) =>
+        props.$darkThemeHome ? props.colors.white : props.colors.theme};
+    } */
+  }
   @media only screen and (max-width: 768px) {
     .body {
       padding: 0.5em;
@@ -33,14 +59,23 @@ const App = (props) => {
 
   let [darkThemeHome, setDarkThemeHome] = useState(
     JSON.parse(localStorage.getItem("dark_theme_home")) ||
-      (window.matchMedia &&
+      (JSON.parse(localStorage.getItem("dark_theme_home")) === undefined &&
+        window.matchMedia &&
         window.matchMedia("(prefers-color-scheme: dark)").matches)
   );
+
+  let [themeColor, setThemeColor] = useState(
+    JSON.parse(localStorage.getItem("themeColor")) || "#4b0082"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("themeColor", JSON.stringify(themeColor));
+  }, [themeColor]);
 
   let colors = {
     dark: "rgb(66,66,66)",
     white: "white",
-    theme: "#4D85C6",
+    theme: themeColor,
     black: "black",
     dark_bg: "rgb(128, 128, 128)",
   };
@@ -63,6 +98,8 @@ const App = (props) => {
         showModal={false}
         $darkThemeHome={darkThemeHome}
         setDarkThemeHome={setDarkThemeHome}
+        themeColor={themeColor}
+        setThemeColor={setThemeColor}
         colors={colors}
         font={font}
         font_sizes={font_sizes}

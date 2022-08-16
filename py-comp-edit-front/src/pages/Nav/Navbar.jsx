@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Tab, Tabs, Offcanvas } from "react-bootstrap";
+import {
+  Button,
+  Modal,
+  Tab,
+  Tabs,
+  Offcanvas,
+  Popover,
+  OverlayTrigger,
+} from "react-bootstrap";
 import styled from "styled-components";
 import Login from "./Login";
 import Register from "./Register";
@@ -22,6 +30,7 @@ import { FiSettings } from "react-icons/fi";
 import "./Navbar.scss";
 import { useNavigate } from "react-router";
 import { BiMenu } from "react-icons/bi";
+import { TwitterPicker } from "react-color";
 
 const StyledModal = styled(Modal)`
   .close {
@@ -134,7 +143,7 @@ const NavbarDiv = styled.div`
 `;
 
 const StyledOffcanvas = styled(Offcanvas)`
-  max-height: 300px;
+  max-height: 380px;
   max-width: 250px;
   background-color: ${(props) =>
     props.$darkThemeHome ? props.colors.dark : props.colors.theme};
@@ -298,13 +307,14 @@ const Navbar = (props) => {
     showMessage,
     logout,
     setDarkThemeHome,
+    setThemeColor,
   } = props;
 
   const [showLogReg, setShowLogReg] = useState(showModal);
 
   const [tabKey, setTabKey] = useState("login");
 
-  const [loginForm, setLoginForm] = useState(defaultLoginForm);
+  const [loginForm, setLoginForm] = useState(JSON.parse(localStorage.getItem('login_form'))||defaultLoginForm);
 
   const [registerForm, setRegisterForm] = useState(defaultRegisterForm);
 
@@ -320,6 +330,7 @@ const Navbar = (props) => {
     setShowSettings(true);
   };
 
+  
   // useEffect(() => {
   //   console.log(user, successMessage, failureMessage, isFetchingLogin);
   // }, [user, successMessage, failureMessage, isFetchingLogin]);
@@ -341,7 +352,7 @@ const Navbar = (props) => {
 
   useEffect(() => {
     clearSuccessFailure();
-    setLoginForm(defaultLoginForm);
+    setLoginForm(JSON.parse(localStorage.getItem('login_form'))||defaultLoginForm);
     setRegisterForm(defaultRegisterForm);
   }, [tabKey]);
 
@@ -418,6 +429,37 @@ const Navbar = (props) => {
                       <div className="switch"></div>
                     </label>
                   </div>
+                  <br />
+                  {!props.$darkThemeHome ? (
+                    <div>
+                      <OverlayTrigger
+                        trigger="click"
+                        placement="bottom"
+                        overlay={
+                          <Popover>
+                            <TwitterPicker
+                              colors={[
+                                "#4b0082",
+                                "#800020",
+                                "#Ff4500",
+                                "#808000",
+                                "#355e3b",
+                                "#002147",
+                                "#A0522d",
+                                "#36454f",
+                              ]}
+                              color={props.themeColor}
+                              onChange={(color) => {
+                                setThemeColor(color.hex);
+                              }}
+                            />
+                          </Popover>
+                        }
+                      >
+                        <label className="navbar-item">Pick a theme</label>
+                      </OverlayTrigger>
+                    </div>
+                  ) : null}
                 </StyledOffcanvas.Body>
               </StyledOffcanvas>
             </div>
@@ -436,7 +478,7 @@ const Navbar = (props) => {
                   <StyledOffcanvas.Title>Menu</StyledOffcanvas.Title>
                 </StyledOffcanvas.Header>
                 <StyledOffcanvas.Body>
-                  <div className="offcanvas-body" onClick={closeSettings}>
+                  <div className="offcanvas-body">
                     <div>
                       <label className="navbar-item">Dark Mode:</label>
                       <label className="switch-wrap">
@@ -454,39 +496,67 @@ const Navbar = (props) => {
                         <div className="switch"></div>
                       </label>
                     </div>
+                    {!props.$darkThemeHome ? (
+                    <div>
+                      <OverlayTrigger
+                        trigger="click"
+                        placement="bottom"
+                        overlay={
+                          <Popover>
+                            <TwitterPicker
+                              colors={[
+                                "#4b0082",
+                                "#800020",
+                                "#Ff4500",
+                                "#808000",
+                                "#355e3b",
+                                "#002147",
+                                "#A0522d",
+                                "#36454f",
+                              ]}
+                              color={props.themeColor}
+                              onChange={(color) => {
+                                setThemeColor(color.hex);
+                              }}
+                            />
+                          </Popover>
+                        }
+                      >
+                        <label className="navbar-item">Pick a theme</label>
+                      </OverlayTrigger>
+                    </div>
+                  ) : null}
                     {!user ? (
                       <span
                         className="navbar-item"
-                        onClick={() => setShowLogReg(true)}
+                        onClick={() => {setShowLogReg(true);closeSettings()}}
                       >
                         Login/Register
                       </span>
                     ) : null}
-                    {user ? (
-                      <span className="navbar-item">Welcome {user.name}</span>
-                    ) : null}
+                    
                     <span
                       className="navbar-item"
-                      onClick={() => navigate("/editor")}
+                      onClick={() => {navigate("/editor");closeSettings()}}
                     >
                       Editor
                     </span>
                     <span
                       className="navbar-item"
-                      onClick={() => navigate("/discussions")}
+                      onClick={() => {navigate("/discussions");closeSettings()}}
                     >
                       Discussions
                     </span>
                     {user ? (
                       <span
                         className="navbar-item"
-                        onClick={() => navigate("/submissions")}
+                        onClick={() => {navigate("/submissions");closeSettings()}}
                       >
                         Submissions
                       </span>
                     ) : null}
                     {user ? (
-                      <span className="navbar-item" onClick={() => logout()}>
+                      <span className="navbar-item" onClick={() => {logout();closeSettings()}}>
                         Logout
                       </span>
                     ) : null}

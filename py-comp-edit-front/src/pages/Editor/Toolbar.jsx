@@ -11,32 +11,52 @@ const ToolbarDiv = styled.div`
     flex-wrap: wrap;
 
     .toolbar-divs {
-      display:flex;
+      display: flex;
       .dropdown {
         margin: 0.5em;
       }
     }
   }
-
-  
 `;
 
 const StyledDropDownToggle = styled(Dropdown.Toggle)`
   font-family: ${(props) => props.fontFamily};
-  color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)};
+  color: ${(props) =>
+    props.$darkTheme ? props.colors.white : props.colors.black};
   background-color: ${(props) =>
     props.$darkTheme ? props.colors.dark : props.colors.white};
-  border: ${(props) => (props.$darkTheme ?`1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
-  :focus {
+  border: ${(props) =>
+    props.$darkTheme
+      ? `1px solid ${props.colors.black}`
+      : `1px solid ${props.colors.theme}`};
+  :active {
+    border: 1px solid red;
     font-family: ${(props) => props.fontFamily} !important;
-    color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)} !important;
+    color: ${(props) =>
+      props.$darkTheme ? props.colors.white : props.colors.black} !important;
     background-color: ${(props) =>
       props.$darkTheme ? props.colors.dark : props.colors.white} !important;
   }
   :hover {
-    color: ${(props) => (props.$darkTheme ? props.colors.black : props.colors.white)};
+    color: ${(props) =>
+      props.$darkTheme ? props.colors.black : props.colors.white};
     background-color: ${(props) =>
-      props.$darkTheme ? props.colors.white : props.colors.dark};
+      props.$darkTheme ? props.colors.white : props.colors.theme};
+      border: ${(props) =>
+    props.$darkTheme
+      ? `1px solid ${props.colors.black}`
+      : `1px solid ${props.colors.theme}`};
+  }
+  :disabled {
+    color: ${(props) =>
+      props.$darkTheme ? props.colors.black : props.colors.white};
+    background-color: ${(props) =>
+      props.$darkTheme ? props.colors.white : props.colors.theme};
+    border: ${(props) =>
+      props.$darkTheme
+        ? `1px solid ${props.colors.black}`
+        : `1px solid ${props.colors.theme}`};
+    cursor: not-allowed;
   }
 `;
 
@@ -47,7 +67,8 @@ const StyledDropDownMenu = styled(Dropdown.Menu)`
 
 const StyledDropDownItem = styled(Dropdown.Item)`
   font-family: ${(props) => props.fontFamily};
-  color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)};
+  color: ${(props) =>
+    props.$darkTheme ? props.colors.white : props.colors.black};
   background-color: ${(props) =>
     props.$darkTheme ? props.colors.dark : props.colors.white};
 `;
@@ -63,7 +84,7 @@ const Toolbar = (props) => {
     changeFontFamily,
     language,
     changeLanguage,
-    submission
+    readOnly,
   } = props;
 
   const font_families_list = [
@@ -81,27 +102,27 @@ const Toolbar = (props) => {
     "'Nunito Sans', sans-serif",
   ];
 
-  const languages_list = {
-    Python: "Python (3.8.1)",
-    Java: "Java (OpenJDK 13.0.1)",
-    JavaScript: "JavaScript (Node.js 12.14.0)",
-    CSharp: "C# (Mono 6.6.0.161)",
-    Cpp: "C++ (GCC 9.2.0)",
-    C: "C (GCC 9.2.0)",
-  };
+  const languages_list = [
+    "Python (3.8.1)",
+    "Java (OpenJDK 13.0.1)",
+    "JavaScript (Node.js 12.14.0)",
+    "C# (Mono 6.6.0.161)",
+    "C++ (GCC 9.2.0)",
+    "C (GCC 9.2.0)",
+  ];
 
   const languages = (props) => {
     let langauges = [];
-    for (var key in languages_list) {
+    for (var i = 0; i < languages_list.length; i++) {
       langauges.push(
         <StyledDropDownItem
           fontFamily={fontFamily}
           $darkTheme={darkTheme}
-          eventKey={key}
-          key={key}
+          eventKey={languages_list[i]}
+          key={languages_list[i]}
           colors={props.colors}
         >
-          {languages_list[key]}
+          {languages_list[i]}
         </StyledDropDownItem>
       );
     }
@@ -177,15 +198,15 @@ const Toolbar = (props) => {
               fontFamily={fontFamily}
               $darkTheme={darkTheme}
               colors={props.colors}
-              disabled={submission ? submission.readOnly : false}
+              disabled={readOnly}
             >
               {window.screen.width >= 768
-                ? `Language: ${languages_list[language]}`
-                : `${language}`}
+                ? `Language: ${language}`
+                : `${language.split(" ")[0]}`}
             </StyledDropDownToggle>
 
             <StyledDropDownMenu $darkTheme={darkTheme} colors={props.colors}>
-              {languages({...props})}
+              {languages({ ...props })}
             </StyledDropDownMenu>
           </Dropdown>
           <Dropdown
@@ -205,7 +226,7 @@ const Toolbar = (props) => {
             </StyledDropDownToggle>
 
             <StyledDropDownMenu $darkTheme={darkTheme} colors={props.colors}>
-              {font_families({...props})} 
+              {font_families({ ...props })}
             </StyledDropDownMenu>
           </Dropdown>
         </div>
@@ -226,7 +247,7 @@ const Toolbar = (props) => {
             </StyledDropDownToggle>
 
             <StyledDropDownMenu $darkTheme={darkTheme} colors={props.colors}>
-              {font_sizes({...props})}
+              {font_sizes({ ...props })}
             </StyledDropDownMenu>
           </Dropdown>
           <Dropdown variant="custom" onSelect={changeFontWeight}>
@@ -241,7 +262,7 @@ const Toolbar = (props) => {
             </StyledDropDownToggle>
 
             <StyledDropDownMenu $darkTheme={darkTheme} colors={props.colors}>
-              {font_weights({...props})}
+              {font_weights({ ...props })}
             </StyledDropDownMenu>
           </Dropdown>
         </div>

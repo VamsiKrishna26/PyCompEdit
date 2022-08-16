@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const InputsDiv = styled.div`
+  font-family: ${(props) => props.fontFamily};
+  color: ${(props) =>
+    props.darkTheme ? props.colors.white : props.colors.black};
   .extras {
     display: flex;
     flex-direction: row;
-    
 
     .file_name-stdin {
       flex: 0.5;
@@ -18,11 +20,11 @@ const InputsDiv = styled.div`
       flex: 0.5;
       display: flex;
       justify-content: center;
-      align-items: center;
+      flex-direction: column;
+      /* align-items: center; */
       margin: 0.5em;
 
       .notes-area {
-        
         flex: 1;
         /* border: 1px solid red; */
         height: 100%;
@@ -32,14 +34,18 @@ const InputsDiv = styled.div`
 
   .stdin_file-name {
     border-radius: 15px 15px 15px 15px;
-    border: ${(props) => (props.darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
+    border: ${(props) =>
+      props.darkTheme
+        ? `1px solid ${props.colors.black}`
+        : `1px solid ${props.colors.theme}`};
     padding: 1em;
     background-color: ${(props) =>
       props.darkTheme ? props.colors.dark : props.colors.white};
     font-family: ${(props) => props.fontFamily};
     font-size: ${(props) => props.fontSize};
     font-weight: ${(props) => props.fontWeight};
-    color: ${(props) => (props.darkTheme ? props.colors.white : props.colors.black)};
+    color: ${(props) =>
+      props.darkTheme ? props.colors.white : props.colors.black};
     margin: 0.5em;
   }
 
@@ -47,7 +53,7 @@ const InputsDiv = styled.div`
     .extras {
       flex-direction: column;
 
-      .notes{
+      .notes {
         margin: 0em;
       }
     }
@@ -71,10 +77,9 @@ const Inputs = (props) => {
     stdin,
     fileName,
     notes,
-    submission
+    readOnly,
   } = props;
 
-  
 
   const onStdinChange = (e) => {
     setStdin(e.target.value);
@@ -82,6 +87,7 @@ const Inputs = (props) => {
   };
 
   const onFileNameChange = (e) => {
+    // setFileNameInput(e.target.value);
     setFileName(e.target.value);
     // localStorage.setItem("fileName", JSON.stringify(e.target.value));
   };
@@ -101,17 +107,21 @@ const Inputs = (props) => {
     >
       <div className="extras">
         <div className="file_name-stdin">
+          <label>File Name:</label>
           <input
+            // onBlur={()=>setFileName(fileNameInput)}
             onChange={onFileNameChange}
+            // onChange={onFileNameChange}
             className="stdin_file-name"
             type="text"
             name="file-name"
             spellCheck="false"
             placeholder="File Name...."
             // defaultValue={fileName}
-            readOnly={submission ? submission.readOnly : false}
+            readOnly={readOnly}
             value={fileName}
           />
+          <label>Input:</label>
           <input
             onChange={onStdinChange}
             className="stdin_file-name"
@@ -120,11 +130,12 @@ const Inputs = (props) => {
             spellCheck="false"
             placeholder="Input..."
             // defaultValue={stdin}
-            readOnly={submission ? submission.readOnly : false}
+            readOnly={readOnly}
             value={stdin}
           />
         </div>
         <div className="notes">
+          <label>Notes:</label>
           <textarea
             onChange={onChangeNotes}
             className="stdin_file-name notes-area"
@@ -132,7 +143,7 @@ const Inputs = (props) => {
             name="notes"
             placeholder="Notes..."
             // defaultValue={notes}
-            readOnly={submission ? submission.readOnly : false}
+            readOnly={readOnly}
             value={notes}
           />
         </div>
