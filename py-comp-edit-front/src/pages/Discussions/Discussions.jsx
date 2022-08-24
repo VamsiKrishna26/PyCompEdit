@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { BsSearch, BsFillEraserFill } from "react-icons/bs";
 
 const DiscussionsDiv = styled.div`
+padding: 1em;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

@@ -1,30 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Modal,
-  Tab,
-  Tabs,
-  Offcanvas,
-  Popover,
-  OverlayTrigger,
-} from "react-bootstrap";
+import { Button, Modal, Tab, Tabs, Offcanvas, Popover, OverlayTrigger } from "react-bootstrap";
 import styled from "styled-components";
 import Login from "./Login";
 import Register from "./Register";
 import { createStructuredSelector } from "reselect";
-import {
-  selectFailureMessage,
-  selectIsFetching,
-  selectIsFetchingLogin,
-  selectSuccessMessage,
-  selectUser,
-} from "../../redux/user/user.selecter";
-import {
-  clearSuccessFailure,
-  fetchLogin,
-  fetchRegister,
-  logout,
-} from "../../redux/user/user.actions";
+import { selectFailureMessage, selectIsFetching, selectIsFetchingLogin, selectSuccessMessage, selectUser } from "../../redux/user/user.selecter";
+import { clearSuccessFailure, fetchLogin, fetchRegister, logout } from "../../redux/user/user.actions";
 import { connect } from "react-redux";
 import { FiSettings } from "react-icons/fi";
 import "./Navbar.scss";
@@ -43,30 +24,20 @@ const StyledModal = styled(Modal)`
 `;
 
 const StyledModalHeader = styled(Modal.Header)`
-  border: ${(props) =>
-    props.$darkThemeHome
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
 `;
 
 const StyledModalTitle = styled(Modal.Title)`
   font-family: ${(props) => props.font} !important;
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
 `;
 
 const StyledModalBody = styled(Modal.Body)`
-  border: ${(props) =>
-    props.$darkThemeHome
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
   font-family: ${(props) => props.font} !important;
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
 
   .nav-tabs {
     display: flex;
@@ -80,27 +51,19 @@ const StyledModalBody = styled(Modal.Body)`
 `;
 
 const StyledModalFooter = styled(Modal.Footer)`
-  border: ${(props) =>
-    props.$darkThemeHome
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
 `;
 
 const StyledModalButton = styled(Button)``;
 
 const StyledTabs = styled(Tabs)`
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white} !important;
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)} !important;
   font-size: ${(props) => props.font_sizes.heading3} !important;
 
   .nav-link {
     text-decoration-color: none !important;
-    color: ${(props) =>
-      props.$darkThemeHome
-        ? props.colors.white
-        : props.colors.black} !important;
+    color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)} !important;
   }
 
   .nav-link.active {
@@ -111,22 +74,30 @@ const StyledTabs = styled(Tabs)`
 const StyledTab = styled(Tab)``;
 
 const NavbarDiv = styled.div`
+  .title-heading {
+    font-family: 'Rock Salt', cursive;
+    font-size: 25px;
+    margin: 0.25em;
+    cursor: pointer;
+  }
+
   .navbar-div {
     min-height: 60px;
-    background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.dark : props.colors.theme};
+    background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.theme)};
     font-family: ${(props) => props.font} !important;
-    color: ${(props) =>
-      props.$darkThemeHome ? props.colors.white : props.colors.white};
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.white)};
     padding: 0.5em;
 
-    .navbar-item {
-      margin: 0.5em;
-      cursor: pointer;
-      font-size: ${(props) => props.font_sizes.heading3};
+    .navbar-div-div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .navbar-item {
+        margin: 0.5em;
+        cursor: pointer;
+        font-size: ${(props) => props.font_sizes.heading3};
+      }
     }
   }
 
@@ -140,16 +111,20 @@ const NavbarDiv = styled.div`
       transform: rotate(360deg);
     }
   }
+
+  @media only screen and (max-width: 768px) {
+    .title-heading{
+      font-size: 20px;
+    }
+  }
 `;
 
 const StyledOffcanvas = styled(Offcanvas)`
   max-height: 380px;
   max-width: 250px;
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.theme};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.theme)};
   font-family: ${(props) => props.font} !important;
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.white};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.white)};
   .offcanvas-body {
     display: flex;
     flex-direction: column;
@@ -182,9 +157,7 @@ const LogRegModal = ({
         <StyledModalTitle {...props}>Login/Register</StyledModalTitle>
       </StyledModalHeader>
       <StyledModalBody {...props}>
-        {showMessage ? (
-          <p>Please login or register before you access the page</p>
-        ) : null}
+        {showMessage ? <p>Please login or register before you access the page</p> : null}
         <LogRegTabs
           loginForm={loginForm}
           setLoginForm={setLoginForm}
@@ -203,12 +176,7 @@ const LogRegModal = ({
           <StyledModalButton
             className="button"
             {...props}
-            disabled={
-              loginForm.email === "" ||
-              loginForm.password === "" ||
-              loginForm.emailError !== "" ||
-              loginForm.passwordError !== ""
-            }
+            disabled={loginForm.email === "" || loginForm.password === "" || loginForm.emailError !== "" || loginForm.passwordError !== ""}
             onClick={() => fetchLogin(loginForm)}
           >
             Login
@@ -239,39 +207,14 @@ const LogRegModal = ({
   );
 };
 
-const LogRegTabs = ({
-  tabKey,
-  setTabKey,
-  loginForm,
-  setLoginForm,
-  $darkThemeHome,
-  registerForm,
-  setRegisterForm,
-  ...props
-}) => {
+const LogRegTabs = ({ tabKey, setTabKey, loginForm, setLoginForm, $darkThemeHome, registerForm, setRegisterForm, ...props }) => {
   return (
-    <StyledTabs
-      {...props}
-      $darkThemeHome={$darkThemeHome}
-      accessKey={tabKey}
-      onSelect={(k) => setTabKey(k)}
-      activeKey={tabKey}
-    >
+    <StyledTabs {...props} $darkThemeHome={$darkThemeHome} accessKey={tabKey} onSelect={(k) => setTabKey(k)} activeKey={tabKey}>
       <StyledTab eventKey="login" title="Login">
-        <Login
-          loginForm={loginForm}
-          setLoginForm={setLoginForm}
-          $darkThemeHome={$darkThemeHome}
-          {...props}
-        />
+        <Login loginForm={loginForm} setLoginForm={setLoginForm} $darkThemeHome={$darkThemeHome} {...props} />
       </StyledTab>
       <StyledTab eventKey="register" title="Register">
-        <Register
-          registerForm={registerForm}
-          setRegisterForm={setRegisterForm}
-          $darkThemeHome={$darkThemeHome}
-          {...props}
-        />
+        <Register registerForm={registerForm} setRegisterForm={setRegisterForm} $darkThemeHome={$darkThemeHome} {...props} />
       </StyledTab>
     </StyledTabs>
   );
@@ -296,25 +239,14 @@ const defaultRegisterForm = {
 };
 
 const Navbar = (props) => {
-  const {
-    user,
-    successMessage,
-    fetchLogin,
-    fetchRegister,
-    clearSuccessFailure,
-    hideNavbar,
-    showModal,
-    showMessage,
-    logout,
-    setDarkThemeHome,
-    setThemeColor,
-  } = props;
+  const { user, successMessage, fetchLogin, fetchRegister, clearSuccessFailure, hideNavbar, showModal, showMessage, logout, setDarkThemeHome, setThemeColor } =
+    props;
 
   const [showLogReg, setShowLogReg] = useState(showModal);
 
   const [tabKey, setTabKey] = useState("login");
 
-  const [loginForm, setLoginForm] = useState(JSON.parse(localStorage.getItem('login_form'))||defaultLoginForm);
+  const [loginForm, setLoginForm] = useState(JSON.parse(localStorage.getItem("login_form")) || defaultLoginForm);
 
   const [registerForm, setRegisterForm] = useState(defaultRegisterForm);
 
@@ -330,7 +262,6 @@ const Navbar = (props) => {
     setShowSettings(true);
   };
 
-  
   // useEffect(() => {
   //   console.log(user, successMessage, failureMessage, isFetchingLogin);
   // }, [user, successMessage, failureMessage, isFetchingLogin]);
@@ -352,7 +283,7 @@ const Navbar = (props) => {
 
   useEffect(() => {
     clearSuccessFailure();
-    setLoginForm(JSON.parse(localStorage.getItem('login_form'))||defaultLoginForm);
+    setLoginForm(JSON.parse(localStorage.getItem("login_form")) || defaultLoginForm);
     setRegisterForm(defaultRegisterForm);
   }, [tabKey]);
 
@@ -365,107 +296,89 @@ const Navbar = (props) => {
       {!hideNavbar ? (
         <div className="navbar-div">
           {window.screen.width >= 768 ? (
-            <div>
-              {!user ? (
-                <span
-                  className="navbar-item"
-                  onClick={() => setShowLogReg(true)}
+            <div className="navbar-div-div">
+              <div className="title-heading" onClick={()=>navigate('/')}>PyCompEdit</div>
+              <div>
+                {!user ? (
+                  <span className="navbar-item" onClick={() => setShowLogReg(true)}>
+                    Login/Register
+                  </span>
+                ) : null}
+                {user ? <span className="navbar-item">Welcome {user.name}</span> : null}
+                <span className="navbar-item" onClick={() => navigate("/editor")}>
+                  Editor
+                </span>
+                <span className="navbar-item" onClick={() => navigate("/discussions")}>
+                  Discussions
+                </span>
+                {user ? (
+                  <span className="navbar-item" onClick={() => navigate("/submissions")}>
+                    Submissions
+                  </span>
+                ) : null}
+                {user ? (
+                  <span className="navbar-item" onClick={() => logout()}>
+                    Logout
+                  </span>
+                ) : null}
+                <FiSettings className="icon" onClick={openSettings} />
+                <StyledOffcanvas
+                  show={showSettings}
+                  onHide={closeSettings}
+                  colors={props.colors}
+                  font_sizes={props.font_sizes}
+                  $darkThemeHome={props.$darkThemeHome}
+                  placement="end"
                 >
-                  Login/Register
-                </span>
-              ) : null}
-              {user ? (
-                <span className="navbar-item">Welcome {user.name}</span>
-              ) : null}
-              <span className="navbar-item" onClick={() => navigate("/editor")}>
-                Editor
-              </span>
-              <span
-                className="navbar-item"
-                onClick={() => navigate("/discussions")}
-              >
-                Discussions
-              </span>
-              {user ? (
-                <span
-                  className="navbar-item"
-                  onClick={() => navigate("/submissions")}
-                >
-                  Submissions
-                </span>
-              ) : null}
-              {user ? (
-                <span className="navbar-item" onClick={() => logout()}>
-                  Logout
-                </span>
-              ) : null}
-              <FiSettings className="icon" onClick={openSettings} />
-              <StyledOffcanvas
-                show={showSettings}
-                onHide={closeSettings}
-                colors={props.colors}
-                font_sizes={props.font_sizes}
-                $darkThemeHome={props.$darkThemeHome}
-                placement="end"
-              >
-                <StyledOffcanvas.Header closeButton>
-                  <StyledOffcanvas.Title>Settings</StyledOffcanvas.Title>
-                </StyledOffcanvas.Header>
-                <StyledOffcanvas.Body>
-                  <div>
-                    <label>Dark Mode:</label>
-                    <label className="switch-wrap">
-                      <input
-                        checked={props.$darkThemeHome}
-                        onChange={() => {
-                          localStorage.setItem(
-                            "dark_theme_home",
-                            JSON.stringify(!props.$darkThemeHome)
-                          );
-                          setDarkThemeHome(!props.$darkThemeHome);
-                        }}
-                        type="checkbox"
-                      />
-                      <div className="switch"></div>
-                    </label>
-                  </div>
-                  <br />
-                  {!props.$darkThemeHome ? (
+                  <StyledOffcanvas.Header closeButton>
+                    <StyledOffcanvas.Title>Settings</StyledOffcanvas.Title>
+                  </StyledOffcanvas.Header>
+                  <StyledOffcanvas.Body>
                     <div>
-                      <OverlayTrigger
-                        trigger="click"
-                        placement="bottom"
-                        overlay={
-                          <Popover>
-                            <TwitterPicker
-                              colors={[
-                                "#4b0082",
-                                "#800020",
-                                "#Ff4500",
-                                "#808000",
-                                "#355e3b",
-                                "#002147",
-                                "#A0522d",
-                                "#36454f",
-                              ]}
-                              color={props.themeColor}
-                              onChange={(color) => {
-                                setThemeColor(color.hex);
-                              }}
-                            />
-                          </Popover>
-                        }
-                      >
-                        <label className="navbar-item">Pick a theme</label>
-                      </OverlayTrigger>
+                      <label>Dark Mode:</label>
+                      <label className="switch-wrap">
+                        <input
+                          checked={props.$darkThemeHome}
+                          onChange={() => {
+                            localStorage.setItem("dark_theme_home", JSON.stringify(!props.$darkThemeHome));
+                            setDarkThemeHome(!props.$darkThemeHome);
+                          }}
+                          type="checkbox"
+                        />
+                        <div className="switch"></div>
+                      </label>
                     </div>
-                  ) : null}
-                </StyledOffcanvas.Body>
-              </StyledOffcanvas>
+                    <br />
+                    {!props.$darkThemeHome ? (
+                      <div>
+                        <OverlayTrigger
+                          trigger="click"
+                          placement="bottom"
+                          overlay={
+                            <Popover>
+                              <TwitterPicker
+                                colors={["#4b0082", "#800020", "#Ff4500", "#808000", "#355e3b", "#002147", "#A0522d", "#36454f"]}
+                                color={props.themeColor}
+                                onChange={(color) => {
+                                  setThemeColor(color.hex);
+                                }}
+                              />
+                            </Popover>
+                          }
+                        >
+                          <label className="navbar-item">Pick a theme</label>
+                        </OverlayTrigger>
+                      </div>
+                    ) : null}
+                  </StyledOffcanvas.Body>
+                </StyledOffcanvas>
+              </div>
             </div>
           ) : (
-            <div>
+            <div className="navbar-div-div">
+              <div className="title-heading" onClick={()=>navigate('/')}>PyCompEdit</div>
               <BiMenu className="icon" onClick={openSettings} />
+              
               <StyledOffcanvas
                 show={showSettings}
                 onHide={closeSettings}
@@ -485,10 +398,7 @@ const Navbar = (props) => {
                         <input
                           checked={props.$darkThemeHome}
                           onChange={() => {
-                            localStorage.setItem(
-                              "dark_theme_home",
-                              JSON.stringify(!props.$darkThemeHome)
-                            );
+                            localStorage.setItem("dark_theme_home", JSON.stringify(!props.$darkThemeHome));
                             setDarkThemeHome(!props.$darkThemeHome);
                           }}
                           type="checkbox"
@@ -497,66 +407,75 @@ const Navbar = (props) => {
                       </label>
                     </div>
                     {!props.$darkThemeHome ? (
-                    <div>
-                      <OverlayTrigger
-                        trigger="click"
-                        placement="bottom"
-                        overlay={
-                          <Popover>
-                            <TwitterPicker
-                              colors={[
-                                "#4b0082",
-                                "#800020",
-                                "#Ff4500",
-                                "#808000",
-                                "#355e3b",
-                                "#002147",
-                                "#A0522d",
-                                "#36454f",
-                              ]}
-                              color={props.themeColor}
-                              onChange={(color) => {
-                                setThemeColor(color.hex);
-                              }}
-                            />
-                          </Popover>
-                        }
-                      >
-                        <label className="navbar-item">Pick a theme</label>
-                      </OverlayTrigger>
-                    </div>
-                  ) : null}
+                      <div>
+                        <OverlayTrigger
+                          trigger="click"
+                          placement="bottom"
+                          overlay={
+                            <Popover>
+                              <TwitterPicker
+                                colors={["#4b0082", "#800020", "#Ff4500", "#808000", "#355e3b", "#002147", "#A0522d", "#36454f"]}
+                                color={props.themeColor}
+                                onChange={(color) => {
+                                  setThemeColor(color.hex);
+                                }}
+                              />
+                            </Popover>
+                          }
+                        >
+                          <label className="navbar-item">Pick a theme</label>
+                        </OverlayTrigger>
+                      </div>
+                    ) : null}
                     {!user ? (
                       <span
                         className="navbar-item"
-                        onClick={() => {setShowLogReg(true);closeSettings()}}
+                        onClick={() => {
+                          setShowLogReg(true);
+                          closeSettings();
+                        }}
                       >
                         Login/Register
                       </span>
                     ) : null}
-                    
+
                     <span
                       className="navbar-item"
-                      onClick={() => {navigate("/editor");closeSettings()}}
+                      onClick={() => {
+                        navigate("/editor");
+                        closeSettings();
+                      }}
                     >
                       Editor
                     </span>
                     <span
                       className="navbar-item"
-                      onClick={() => {navigate("/discussions");closeSettings()}}
+                      onClick={() => {
+                        navigate("/discussions");
+                        closeSettings();
+                      }}
                     >
                       Discussions
                     </span>
                     {user ? (
                       <span
                         className="navbar-item"
-                        onClick={() => {navigate("/submissions");closeSettings()}}
+                        onClick={() => {
+                          navigate("/submissions");
+                          closeSettings();
+                        }}
                       >
                         Submissions
                       </span>
                     ) : null}
                     {user ? (
-                      <span className="navbar-item" onClick={() => {logout();closeSettings()}}>
+                      <span
+                        className="navbar-item"
+                        onClick={() => {
+                          logout();
+                          closeSettings();
+                        }}
+                      >
                         Logout
                       </span>
                     ) : null}

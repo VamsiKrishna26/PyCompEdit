@@ -17,6 +17,7 @@ import Filters from "./Filters";
 import { BsSearch, BsFillEraserFill } from "react-icons/bs";
 
 const SubmissionsDiv = styled.div`
+  padding: 1em;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -48,32 +49,26 @@ const SubmissionsDiv = styled.div`
     .search {
       flex: 0.8;
       border-radius: 15px 15px 15px 15px;
-      border: ${(props) =>
-        props.$darkThemeHome
-          ? `1px solid ${props.colors.black}`
-          : `1px solid ${props.colors.theme}`};
+      border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
       padding: 1em;
-      background-color: ${(props) =>
-        props.$darkThemeHome ? props.colors.dark : props.colors.white};
+      background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
       font-family: ${(props) => props.font};
-      color: ${(props) =>
-        props.$darkThemeHome ? props.colors.white : props.colors.black};
+      color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
       margin-top: 0.5em;
     }
     .icon {
       flex: 0.1;
-      color: ${(props) =>
-        props.$darkThemeHome ? props.colors.white : props.colors.theme};
+      color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.theme)};
       font-size: larger;
       cursor: pointer;
     }
   }
 
   @media only screen and (max-width: 768px) {
-    .pagination{
+    .pagination {
       margin: 0em;
     }
-    .documents{
+    .documents {
       margin: 0.5em;
     }
   }
@@ -81,58 +76,41 @@ const SubmissionsDiv = styled.div`
 
 const StyledDropDownToggle = styled(Dropdown.Toggle)`
   font-family: ${(props) => props.font};
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
-  border: ${(props) =>
-    props.$darkThemeHome
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
+  border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
   :focus {
     font-family: ${(props) => props.font} !important;
-    color: ${(props) =>
-      props.$darkThemeHome
-        ? props.colors.white
-        : props.colors.black} !important;
-    background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.dark : props.colors.white} !important;
+    color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)} !important;
+    background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)} !important;
   }
   :hover {
-    color: ${(props) =>
-      props.$darkThemeHome ? props.colors.black : props.colors.white};
-    background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.white : props.colors.theme};
+    color: ${(props) => (props.$darkThemeHome ? props.colors.black : props.colors.white)};
+    background-color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.theme)};
   }
 `;
 
 const StyledDropDownMenu = styled(Dropdown.Menu)`
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
 `;
 
 const StyledDropDownItem = styled(Dropdown.Item)`
   font-family: ${(props) => props.font};
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
 `;
 
 const StyledTable = styled(Table)`
   margin-top: 1em;
   font-family: ${(props) => props.font};
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
 
   thead {
-    background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.black : props.colors.white};
+    background-color: ${(props) => (props.$darkThemeHome ? props.colors.black : props.colors.white)};
   }
 
   tbody {
-    background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.dark : props.colors.white};
+    background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
   }
 `;
 
@@ -200,7 +178,7 @@ const Submissions = (props) => {
           console.log("The server is down. Please try again after some time.");
         }
       });
-  }, [user,sort, page, noOfDocuments,search]);
+  }, [user, sort, page, noOfDocuments, search]);
 
   useEffect(() => {
     axios
@@ -226,7 +204,7 @@ const Submissions = (props) => {
         }
       });
     setPage(1);
-  }, [user,noOfDocuments,search]);
+  }, [user, noOfDocuments, search]);
 
   const documents = [5, 10, 15, 25, 50];
 
@@ -236,13 +214,7 @@ const Submissions = (props) => {
     let documentsList = [];
     for (var i = 0; i < documents.length; i++) {
       documentsList.push(
-        <StyledDropDownItem
-          $darkThemeHome={props.$darkThemeHome}
-          eventKey={documents[i]}
-          key={documents[i]}
-          colors={props.colors}
-          font={font}
-        >
+        <StyledDropDownItem $darkThemeHome={props.$darkThemeHome} eventKey={documents[i]} key={documents[i]} colors={props.colors} font={font}>
           {documents[i]}
         </StyledDropDownItem>
       );
@@ -251,30 +223,13 @@ const Submissions = (props) => {
   };
 
   return (
-    <SubmissionsDiv
-      colors={colors}
-      font={font}
-      font_sizes={font_sizes}
-      $darkThemeHome={$darkThemeHome}
-    >
+    <SubmissionsDiv colors={colors} font={font} font_sizes={font_sizes} $darkThemeHome={$darkThemeHome}>
       <div className="sort-bar">
-        <SortBar
-          keyprop={key}
-          setKey={setKey}
-          sort={sort}
-          setSort={setSort}
-          {...props}
-        />
+        <SortBar keyprop={key} setKey={setKey} sort={sort} setSort={setSort} {...props} />
       </div>
       <div className="search-bar">
         <div className="wrapper">
-          <input
-            className="search"
-            type="text"
-            name="search"
-            placeholder="Search Filenames, languages, statuses and notes"
-            ref={searchRef}
-          />
+          <input className="search" type="text" name="search" placeholder="Search Filenames, languages, statuses and notes" ref={searchRef} />
           <BsSearch
             className="icon"
             onClick={() => {
@@ -293,13 +248,7 @@ const Submissions = (props) => {
       <div className="table-filter">
         <Filters />
         {window.screen.width >= 768 ? (
-          <StyledTable
-            responsive
-            bordered
-            font={font}
-            $darkThemeHome={$darkThemeHome}
-            colors={colors}
-          >
+          <StyledTable responsive bordered font={font} $darkThemeHome={$darkThemeHome} colors={colors}>
             <thead>
               <tr>
                 <th style={{ width: "5%" }}>S.No</th>
@@ -343,12 +292,7 @@ const Submissions = (props) => {
         )}
       </div>
       <div className="pagination">
-        <PaginationComp
-          page={page}
-          pages={pages}
-          setPage={setPage}
-          {...props}
-        />
+        <PaginationComp page={page} pages={pages} setPage={setPage} {...props} />
       </div>
       <div className="documents">
         <Dropdown
@@ -358,14 +302,8 @@ const Submissions = (props) => {
           }}
           className="dropdown"
         >
-          <StyledDropDownToggle
-            $darkThemeHome={$darkThemeHome}
-            colors={colors}
-            font={font}
-          >
-            {window.screen.width >= 768
-              ? `Number of Documents: ${noOfDocuments}`
-              : `${noOfDocuments}`}
+          <StyledDropDownToggle $darkThemeHome={$darkThemeHome} colors={colors} font={font}>
+            {window.screen.width >= 768 ? `Number of Documents: ${noOfDocuments}` : `${noOfDocuments}`}
           </StyledDropDownToggle>
 
           <StyledDropDownMenu $darkThemeHome={$darkThemeHome} colors={colors}>

@@ -17,6 +17,7 @@ import configData from "../../config.json";
 import SamplePrograms from "./SamplePrograms";
 
 const EditorDiv = styled.div`
+  padding: 1em;
   .editor-area {
     display: flex;
     justify-content: center;
@@ -65,17 +66,13 @@ const EditorDiv = styled.div`
     .display {
       display: flex;
       align-items: ${(props) => (props.isFetching ? "center" : "flex-start")};
-      justify-content: ${(props) =>
-        props.isFetching ? "center" : "flex-start"};
+      justify-content: ${(props) => (props.isFetching ? "center" : "flex-start")};
       margin: 1em;
       position: relative;
       border-radius: 15px 15px 15px 15px;
-      border: 1px solid
-        ${(props) =>
-          props.darkTheme ? props.colors.black : props.colors.theme};
+      border: 1px solid ${(props) => (props.darkTheme ? props.colors.black : props.colors.theme)};
       padding: 1em;
-      background-color: ${(props) =>
-        props.darkTheme ? props.colors.dark : props.colors.white};
+      background-color: ${(props) => (props.darkTheme ? props.colors.dark : props.colors.white)};
       min-height: 200px !important;
       max-height: 400px !important;
       overflow-y: auto;
@@ -111,17 +108,13 @@ const StyledFormControl = styled(Form.Control)`
   width: 320px;
   :focus {
     font-family: ${(props) => props.fontFamily};
-    color: ${(props) =>
-      props.$darkTheme ? props.colors.white : props.colors.black};
-    background-color: ${(props) =>
-      props.$darkTheme ? props.colors.dark : props.colors.white};
+    color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)};
+    background-color: ${(props) => (props.$darkTheme ? props.colors.dark : props.colors.white)};
   }
   :not(active) {
     font-family: ${(props) => props.fontFamily};
-    color: ${(props) =>
-      props.$darkTheme ? props.colors.white : props.colors.black};
-    background-color: ${(props) =>
-      props.$darkTheme ? props.colors.dark : props.colors.white};
+    color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)};
+    background-color: ${(props) => (props.$darkTheme ? props.colors.dark : props.colors.white)};
   }
   @media only screen and (max-width: 768px) {
     width: 130px;
@@ -130,24 +123,14 @@ const StyledFormControl = styled(Form.Control)`
 
 const StyledDownloadButton = styled(Button)`
   font-family: ${(props) => props.fontFamily};
-  color: ${(props) =>
-    props.$darkTheme ? props.colors.white : props.colors.black};
-  background-color: ${(props) =>
-    props.$darkTheme ? props.colors.dark : props.colors.white};
+  color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)};
+  background-color: ${(props) => (props.$darkTheme ? props.colors.dark : props.colors.white)};
   margin-left: 0.5em;
-  border: ${(props) =>
-    props.$darkTheme
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
+  border: ${(props) => (props.$darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
   :hover {
-    color: ${(props) =>
-      props.$darkTheme ? props.colors.black : props.colors.white};
-    background-color: ${(props) =>
-      props.$darkTheme ? props.colors.white : props.colors.theme};
-    border: ${(props) =>
-      props.$darkTheme
-        ? `1px solid ${props.colors.theme}`
-        : `1px solid ${props.colors.black}`};
+    color: ${(props) => (props.$darkTheme ? props.colors.black : props.colors.white)};
+    background-color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.theme)};
+    border: ${(props) => (props.$darkTheme ? `1px solid ${props.colors.theme}` : `1px solid ${props.colors.black}`)};
   }
 `;
 
@@ -164,40 +147,21 @@ const Editor = (props) => {
 
   let [codeString, setCodeString] = useState(null);
 
-  let [fontFamily, setFontFamily] = useState(
-    JSON.parse(localStorage.getItem("font_family")) ||
-      "'Source Code Pro', monospace"
-  );
+  let [fontFamily, setFontFamily] = useState(JSON.parse(localStorage.getItem("font_family")) || "'Source Code Pro', monospace");
 
-  let [fontWeight, setFontWeight] = useState(
-    JSON.parse(localStorage.getItem("font_weight")) || 400
-  );
+  let [fontWeight, setFontWeight] = useState(JSON.parse(localStorage.getItem("font_weight")) || 400);
 
-  let [fontSize, setFontSize] = useState(
-    JSON.parse(localStorage.getItem("font_size")) || "16px"
-  );
+  let [fontSize, setFontSize] = useState(JSON.parse(localStorage.getItem("font_size")) || "16px");
 
-  let [language, setLanguage] = useState(
-    location.state
-      ? location.state.language
-      : JSON.parse(localStorage.getItem("language")) || "Python (3.8.1)"
-  );
+  let [language, setLanguage] = useState(location.state ? location.state.language : JSON.parse(localStorage.getItem("language")) || "Python (3.8.1)");
 
   useEffect(() => {
-    console.log(
-      location.state
-        ? location.state.language
-        : JSON.parse(localStorage.getItem("language")) || "Python (3.8.1)"
-    );
+    console.log(location.state ? location.state.language : JSON.parse(localStorage.getItem("language")) || "Python (3.8.1)");
   }, [language]);
 
-  let [darkTheme, setDarkTheme] = useState(
-    JSON.parse(localStorage.getItem("dark_theme")) || false
-  );
+  let [darkTheme, setDarkTheme] = useState(JSON.parse(localStorage.getItem("dark_theme")) || false);
 
-  let [readOnly, setReadOnly] = useState(
-    location.state ? location.state.readOnly : true
-  );
+  let [readOnly, setReadOnly] = useState(location.state ? location.state.readOnly : true);
 
   let [result, setResult] = useState(location.state ? location.state : {});
 
@@ -209,25 +173,12 @@ const Editor = (props) => {
 
   let [sampleProgram, setSampleProgram] = useState(null);
 
-  let [stdin, setStdin] = useState(
-    location.state
-      ? location.state.stdin
-      : JSON.parse(localStorage.getItem("stdin")) || ""
-  );
+  let [stdin, setStdin] = useState(location.state ? location.state.stdin : JSON.parse(localStorage.getItem("stdin")) || "");
 
-  let [fileName, setFileName] = useState(
-    location.state
-      ? location.state.fileName
-      : JSON.parse(localStorage.getItem("fileName")) || "Script1"
-  );
+  let [fileName, setFileName] = useState(location.state ? location.state.fileName : JSON.parse(localStorage.getItem("fileName")) || "Script1");
 
-  let [notes, setNotes] = useState(
-    location.state
-      ? location.state.notes
-      : JSON.parse(localStorage.getItem("notes")) || ""
-  );
+  let [notes, setNotes] = useState(location.state ? location.state.notes : JSON.parse(localStorage.getItem("notes")) || "");
 
-  
   const codeStringChange = (code) => {
     setCodeString(code.map((node) => Node.string(node)).join("\n"));
   };
@@ -292,9 +243,9 @@ const Editor = (props) => {
       });
   };
 
-  const copyToClipboard=()=>{
+  const copyToClipboard = () => {
     navigator.clipboard.writeText(codeString);
-  }
+  };
 
   const uploadFile = async (e) => {
     setUploadFileText("");
@@ -329,9 +280,7 @@ const Editor = (props) => {
     } else if (location.state && location.state.language === language) {
       setUploadFileText(location.state.source_code);
     } else if (code && code[language]) {
-      code[language] = code[language]
-        .map((node) => Node.string(node))
-        .join("\n");
+      code[language] = code[language].map((node) => Node.string(node)).join("\n");
       while (code[language].substring(0, 1) === "\n") {
         code[language] = code[language].substring(1);
       }
@@ -344,21 +293,15 @@ const Editor = (props) => {
       } else if (language === "Python (3.8.1)") {
         setUploadFileText("#Type your code here\n\nprint('Hello World!!!')");
       } else if (language === "JavaScript (Node.js 12.14.0)") {
-        setUploadFileText(
-          '//Type your code here\n\nconsole.log("Hello World!!!")'
-        );
+        setUploadFileText('//Type your code here\n\nconsole.log("Hello World!!!")');
       } else if (language === "C# (Mono 6.6.0.161)") {
         setUploadFileText(
           'using System;\nnamespace Main{\n    class Program{\n        static void Main(string[] args){\n            Console.WriteLine("Hello World!");\n        }\n    }\n}'
         );
       } else if (language === "C++ (GCC 9.2.0)") {
-        setUploadFileText(
-          '#include <iostream>\nint main() {\n    std::cout << "Hello World!";\n    return 0;\n}'
-        );
+        setUploadFileText('#include <iostream>\nint main() {\n    std::cout << "Hello World!";\n    return 0;\n}');
       } else if (language === "C (GCC 9.2.0)") {
-        setUploadFileText(
-          '#include <stdio.h>\nint main() {\n    printf("Hello, World!");\n    return 0;\n}'
-        );
+        setUploadFileText('#include <stdio.h>\nint main() {\n    printf("Hello, World!");\n    return 0;\n}');
       }
     }
   }, [language, sampleProgram]);
@@ -381,24 +324,13 @@ const Editor = (props) => {
   };
 
   return (
-    <EditorDiv
-      darkTheme={darkTheme}
-      fontFamily={fontFamily}
-      fontSize={fontSize}
-      fontWeight={fontWeight}
-      isFetching={isFetching}
-      {...props}
-    >
+    <EditorDiv darkTheme={darkTheme} fontFamily={fontFamily} fontSize={fontSize} fontWeight={fontWeight} isFetching={isFetching} {...props}>
       <div className="editor-area">
         <div className="editor">
           <div>
             <Form.Group className="button-area">
               <div className="upload">
-                {window.screen.width >= 768 ? (
-                  <Form.Label className="upload-label">
-                    Upload a Local File:{" "}
-                  </Form.Label>
-                ) : null}
+                {window.screen.width >= 768 ? <Form.Label className="upload-label">Upload a Local File: </Form.Label> : null}
                 <StyledFormControl
                   id="uploadFile"
                   fontFamily={fontFamily}
@@ -409,13 +341,7 @@ const Editor = (props) => {
                   colors={props.colors}
                 />
               </div>
-              <StyledDownloadButton
-                variant="custom"
-                fontFamily={fontFamily}
-                $darkTheme={darkTheme}
-                onClick={downloadFile}
-                colors={props.colors}
-              >
+              <StyledDownloadButton variant="custom" fontFamily={fontFamily} $darkTheme={darkTheme} onClick={downloadFile} colors={props.colors}>
                 {window.screen.width >= 768 ? `Download the file` : `Download`}
               </StyledDownloadButton>
               {readOnly ? (
@@ -466,10 +392,7 @@ const Editor = (props) => {
                 <input
                   checked={darkTheme}
                   onChange={() => {
-                    localStorage.setItem(
-                      "dark_theme",
-                      JSON.stringify(!darkTheme)
-                    );
+                    localStorage.setItem("dark_theme", JSON.stringify(!darkTheme));
                     setDarkTheme(!darkTheme);
                   }}
                   type="checkbox"
@@ -510,6 +433,7 @@ const Editor = (props) => {
                 copyToClipboard={copyToClipboard}
                 {...props}
               />
+
               <Inputs
                 fontFamily={fontFamily}
                 fontSize={fontSize}
@@ -528,26 +452,11 @@ const Editor = (props) => {
           </div>
         </div>
         {!readOnly ? (
-          <RunButton
-            fontFamily={fontFamily}
-            fontSize={fontSize}
-            darkTheme={darkTheme}
-            fontWeight={fontWeight}
-            fetchSubmission={fetchSubmission}
-            {...props}
-          />
+          <RunButton fontFamily={fontFamily} fontSize={fontSize} darkTheme={darkTheme} fontWeight={fontWeight} fetchSubmission={fetchSubmission} {...props} />
         ) : null}
         <div className="display">
           {!isFetching ? (
-            <DisplayResult
-              {...props}
-              fontFamily={fontFamily}
-              fontSize={fontSize}
-              darkTheme={darkTheme}
-              fontWeight={fontWeight}
-              result={result}
-              {...props}
-            />
+            <DisplayResult {...props} fontFamily={fontFamily} fontSize={fontSize} darkTheme={darkTheme} fontWeight={fontWeight} result={result} {...props} />
           ) : (
             <LoadingScreen darkTheme={darkTheme} />
           )}
@@ -560,4 +469,5 @@ const Editor = (props) => {
 const mapStateToProps = createStructuredSelector({
   user: selectUser,
 });
+
 export default connect(mapStateToProps)(Editor);
