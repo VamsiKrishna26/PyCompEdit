@@ -115,6 +115,11 @@ const StyledTable = styled(Table)`
 `;
 
 const Submissions = (props) => {
+
+  useEffect(()=>{
+    document.title='Submissions - PyCompEdit';
+  },[])
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [sort, setSort] = useState({ finished_at: -1 });

@@ -105,6 +105,21 @@ const MainPageDiv = styled.div`
       margin-right: 0.5em;
     }
   }
+
+  @media only screen and (max-width: 768px) {
+    .first-item{
+      flex-direction: column;
+      .monitor{
+        margin-bottom: 0.3em;
+      }
+    }
+    .item-back{
+      flex-direction: column;
+    }
+    .third-item-back{
+      flex-direction: column;
+    }
+  }
 `;
 
 const StyledButton = styled(Button)`

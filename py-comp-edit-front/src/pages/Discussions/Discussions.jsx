@@ -135,6 +135,11 @@ const StyledButton = styled(Button)`
 `;
 
 const Discussions = (props) => {
+
+  useEffect(()=>{
+    document.title='Discussions - PyCompEdit';
+  },[])
+
   const [sort, setSort] = useState(
     JSON.parse(localStorage.getItem("discussionSort")) || {
       finished_at: -1,
@@ -290,6 +295,7 @@ const Discussions = (props) => {
           {...props}
         />
       </div>
+
       <div className="search-bar">
         <div className="wrapper">
           <input
@@ -314,6 +320,7 @@ const Discussions = (props) => {
           />
         </div>
       </div>
+      
       <div className="discussion">
         {discussions.map((item, i) => (
           <Discussion

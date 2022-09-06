@@ -62,6 +62,10 @@ const AppDiv = styled.div`
 const App = (props) => {
   const { user } = props;
 
+  useEffect(()=>{
+    document.title='PyCompEdit';
+  },[])
+
   let [darkThemeHome, setDarkThemeHome] = useState(
     JSON.parse(localStorage.getItem("dark_theme_home")) ||
       (JSON.parse(localStorage.getItem("dark_theme_home")) === undefined && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
@@ -130,10 +134,12 @@ const App = (props) => {
               }
             />
           }
+
           <Route
             path="/discussions/:discussionId"
             element={<Discussion $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} />}
           />
+          
           <Route path="/discussions" element={<Discussions $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} />} />
           {
             <Route

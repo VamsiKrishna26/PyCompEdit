@@ -53,6 +53,8 @@ const StyledPaginationLast = styled(Pagination.Last)``;
 const PaginationComp = (props) => {
   const { page, setPage, pages } = props;
 
+  console.log(props);
+
   const pagination_pages = (props) => {
     let pagesList = [];
     pagesList.push(

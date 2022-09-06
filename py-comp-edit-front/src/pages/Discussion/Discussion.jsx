@@ -197,6 +197,7 @@ const StyledAccordionHeader = styled(Accordion.Header)``;
 const StyledAccordionBody = styled(Accordion.Body)``;
 
 const Discussion = (props) => {
+
   const [discussion, setDiscussion] = useState(null);
 
   const [answers, setAnswers] = useState([]);
@@ -206,6 +207,10 @@ const Discussion = (props) => {
   const sorts_list = ["Default", "Highest Scored", "Date Desc", "Date Asc"];
 
   const [sort, setSort] = useState("Default");
+
+  useEffect(()=>{
+    document.title=`${discussion?discussion.Title:`Doesn't exist`} - PyCompEdit`;
+  },[discussion])
 
   const { user } = props;
 

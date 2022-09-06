@@ -72,6 +72,10 @@ const StyledButton = styled(Button)`
 `;
 
 const AddDiscussion = (props) => {
+  useEffect(()=>{
+    document.title='Add Discussion - PyCompEdit';
+  },[])
+
   const {
     colors,
     font,
