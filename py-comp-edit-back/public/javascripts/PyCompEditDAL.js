@@ -8,12 +8,12 @@ var connection = require("./connection");
 var PyCompEditDAL = {};
 
 const language_select = {
-  Python: 71,
-  Java: 62,
-  JavaScript: 63,
-  CSharp: 51,
-  Cpp: 76,
-  C: 48,
+  "Python (3.8.1)": 71,
+  "Java (OpenJDK 13.0.1)": 62,
+  "JavaScript (Node.js 12.14.0)": 63,
+  "C# (Mono 6.6.0.161)": 51,
+  "C++ (GCC 9.2.0)": 76,
+  "C (GCC 9.2.0)": 48,
 };
 
 PyCompEditDAL.checkAPIConn = async function () {
@@ -27,44 +27,24 @@ PyCompEditDAL.checkAPIConn = async function () {
     .then((response) => response.data);
 };
 
-PyCompEditDAL.submit = async function (
-  userId,
-  fileName,
-  notes,
-  source_code,
-  stdin,
-  language
-) {
+PyCompEditDAL.submit = async function (userId, fileName, notes, source_code, stdin, language) {
   return connection.getConnection().then(async function (db) {
     try {
-      source_code = source_code
-        ? Buffer.from(source_code).toString("base64")
-        : "";
+      source_code = source_code ? Buffer.from(source_code).toString("base64") : "";
       stdin = stdin ? Buffer.from(stdin).toString("base64") : "";
-      var { token } = await axios(
-        "https://judge0-ce.p.rapidapi.com/submissions",
-        {
-          method: "POST",
-          params: {
-            base64_encoded: "true",
-            fields: "*",
-          },
-          headers: {
-            "Content-Type": "application/json",
-            "X-RapidAPI-Key":
-              "ae615435a2msh56d6b3d25e5d1c6p11491ajsnbefe4ccd3acb",
-            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
-          },
-          data:
-            '{"language_id":' +
-            language_select[language] +
-            ',"source_code":"' +
-            source_code +
-            '","stdin":"' +
-            stdin +
-            '"}',
-        }
-      )
+      var { token } = await axios("https://judge0-ce.p.rapidapi.com/submissions", {
+        method: "POST",
+        params: {
+          base64_encoded: "true",
+          fields: "*",
+        },
+        headers: {
+          "Content-Type": "application/json",
+          "X-RapidAPI-Key": "ae615435a2msh56d6b3d25e5d1c6p11491ajsnbefe4ccd3acb",
+          "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+        },
+        data: '{"language_id":' + language_select[language] + ',"source_code":"' + source_code + '","stdin":"' + stdin + '"}',
+      })
         .then((response) => response.data)
         .catch(function (error) {
           console.log(error);
@@ -77,8 +57,7 @@ PyCompEditDAL.submit = async function (
             fields: "*",
           },
           headers: {
-            "X-RapidAPI-Key":
-              "ae615435a2msh56d6b3d25e5d1c6p11491ajsnbefe4ccd3acb",
+            "X-RapidAPI-Key": "ae615435a2msh56d6b3d25e5d1c6p11491ajsnbefe4ccd3acb",
             "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
           },
         })
@@ -87,26 +66,11 @@ PyCompEditDAL.submit = async function (
           console.log(error);
         });
       // console.log(response);
-      response.source_code = Buffer.from(
-        response.source_code,
-        "base64"
-      ).toString();
-      response.stdin = response.stdin
-        ? Buffer.from(response.stdin, "base64").toString()
-        : "";
-      response.stdout =
-        response.stdout || response.compile_output
-          ? Buffer.from(
-              response.stdout || response.compile_output,
-              "base64"
-            ).toString()
-          : "";
-      response.stderr = response.stderr
-        ? Buffer.from(response.stderr, "base64").toString()
-        : "";
-      response.message = response.message
-        ? Buffer.from(response.message, "base64").toString()
-        : "";
+      response.source_code = Buffer.from(response.source_code, "base64").toString();
+      response.stdin = response.stdin ? Buffer.from(response.stdin, "base64").toString() : "";
+      response.stdout = response.stdout || response.compile_output ? Buffer.from(response.stdout || response.compile_output, "base64").toString() : "";
+      response.stderr = response.stderr ? Buffer.from(response.stderr, "base64").toString() : "";
+      response.message = response.message ? Buffer.from(response.message, "base64").toString() : "";
       if (userId) {
         fileName = fileName !== "" || fileName ? fileName : "Script1";
         response.userId = userId;
@@ -156,9 +120,7 @@ PyCompEditDAL.register = async function (email, password, dob, name) {
         .toString()
         .replace(/[a-zA-z]/g, "")
         .slice(0, 8);
-      await db
-        .collection("Users")
-        .updateOne({ _id: ObjectId(insertedId) }, { $set: { userId: userId } });
+      await db.collection("Users").updateOne({ _id: ObjectId(insertedId) }, { $set: { userId: userId } });
       return "Success";
     }
   });
@@ -174,12 +136,12 @@ PyCompEditDAL.login = async function (email, password) {
       .then(async (dbUser) => {
         if (!dbUser) {
           console.log("Hello1");
-          throw new Error("Email not found");
+          throw new Error("Email/Password is incorrect");
         } else {
           return bcrypt.compare(password, dbUser.password).then((isCorrect) => {
             if (!isCorrect) {
               console.log("Hello2");
-              throw new Error("Password is incorrect");
+              throw new Error("Email/Password is incorrect");
             } else {
               const payload = {
                 id: dbUser._id,
@@ -216,13 +178,7 @@ PyCompEditDAL.login = async function (email, password) {
   });
 };
 
-PyCompEditDAL.submissions = async function (
-  userId,
-  sort,
-  page,
-  noOfDocuments,
-  search
-) {
+PyCompEditDAL.submissions = async function (userId, sort, page, noOfDocuments, search) {
   if (sort) {
     sort[ObjectId] = 1;
   } else {
@@ -342,9 +298,7 @@ PyCompEditDAL.noOfPages = async function (noOfDocuments, userId, search) {
 PyCompEditDAL.deleteSubmission = async function (submissionId) {
   return connection.getConnection().then(async function (db) {
     try {
-      await db
-        .collection("Submissions")
-        .deleteOne({ _id: ObjectId(submissionId) });
+      await db.collection("Submissions").deleteOne({ _id: ObjectId(submissionId) });
       return "Deletion successful";
     } catch {
       throw new Error("Submission ID not present");
@@ -471,9 +425,7 @@ PyCompEditDAL.noOfPages1 = async function (noOfDocuments, search) {
 
 PyCompEditDAL.getDiscussionById = async function (_id) {
   return connection.getConnection().then(async function (db) {
-    let discussion = await db
-      .collection("Discussions")
-      .findOne({ _id: ObjectId(_id) });
+    let discussion = await db.collection("Discussions").findOne({ _id: ObjectId(_id) });
     if (!discussion) {
       throw new Error("Discussion ID not present");
     }
@@ -488,15 +440,8 @@ PyCompEditDAL.addDiscussion = async function (discussion) {
     discussion.Score = 0;
     discussion.Answers = [];
     discussion.Views = 0;
-    let discussionId = (
-      await db.collection("Discussions").insertOne(discussion)
-    ).insertedId;
-    await db
-      .collection("Users")
-      .updateOne(
-        { userId: discussion.userId },
-        { $push: { discussions: discussionId } }
-      );
+    let discussionId = (await db.collection("Discussions").insertOne(discussion)).insertedId;
+    await db.collection("Users").updateOne({ userId: discussion.userId }, { $push: { discussions: discussionId } });
     return discussionId;
   });
 };
@@ -517,13 +462,9 @@ PyCompEditDAL.addAnswer = async function (discussionId, answer) {
     answer.CreationDate = new Date();
     answer.ParentId = discussionId;
     answer.Score = 0;
-    await db
-      .collection("Discussions")
-      .updateOne({ Id: discussionId }, { $push: { Answers: answer } });
+    await db.collection("Discussions").updateOne({ Id: discussionId }, { $push: { Answers: answer } });
     let String1 = String(discussionId) + "_" + String(answer.Id);
-    await db
-      .collection("Users")
-      .updateOne({ userId: answer.userId }, { $push: { answers: String1 } });
+    await db.collection("Users").updateOne({ userId: answer.userId }, { $push: { answers: String1 } });
     return String1;
   });
 };
@@ -554,13 +495,7 @@ PyCompEditDAL.verifyJWT = async function (req, res, next) {
 
 PyCompEditDAL.addPrograms = async function (language, program) {
   return connection.getConnection().then(async function (db) {
-    await db
-      .collection("Programs")
-      .updateOne(
-        { language: language },
-        { $push: { programs: program } },
-        { upsert: true }
-      );
+    await db.collection("Programs").updateOne({ language: language }, { $push: { programs: program } }, { upsert: true });
     return "Success";
   });
 };
