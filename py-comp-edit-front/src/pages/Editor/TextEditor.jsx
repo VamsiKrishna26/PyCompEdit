@@ -483,7 +483,10 @@ const TextEditor = (props) => {
           </div>
           {showSearch ? <TiTimes className="icon" onClick={() => setShowSearch(false)} /> : <BsSearch className="icon" onClick={() => setShowSearch(true)} />}
           <IoCopy className="icon" onClick={() => copyToClipboard()} />
-          <FaShareAlt className="icon" onClick={() => navigate("/discussions/addDiscussion", { state: { code: code.map((node) => Node.string(node)).join("\n")} })} />
+          <FaShareAlt
+            className="icon"
+            onClick={() => navigate("/discussions/addDiscussion", { state: { code: code.map((node) => Node.string(node)).join("\n") } })}
+          />
         </div>
       </div>
     </TextEditorDiv>

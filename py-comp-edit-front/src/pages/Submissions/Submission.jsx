@@ -6,48 +6,36 @@ import { useNavigate } from "react-router";
 import styled from "styled-components";
 import configData from "../../config.json";
 
-
 const SubmissionDiv = styled.tr`
   .more {
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    
   }
 `;
 
 const StyledModal = styled(Modal)`
-.delete{
-  border:1px solid red;
-}
+  .delete {
+    border: 1px solid red;
+  }
 `;
 
 const StyledModalHeader = styled(Modal.Header)`
-  border: ${(props) =>
-    props.$darkThemeHome
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
 `;
 
 const StyledModalTitle = styled(Modal.Title)`
   font-family: ${(props) => props.font} !important;
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
 `;
 
 const StyledModalBody = styled(Modal.Body)`
-  border: ${(props) =>
-    props.$darkThemeHome
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
   font-family: ${(props) => props.font} !important;
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
 
   .nav-tabs {
     display: flex;
@@ -62,22 +50,14 @@ const StyledModalBody = styled(Modal.Body)`
 
 const StyledDownloadButton = styled(Button)`
   font-family: ${(props) => props.fontFamily};
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
   margin-left: 0.5em;
-  border: ${(props) =>
-    props.$darkThemeHome
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
+  border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
   :hover {
-    color: ${(props) =>
-    props.$darkThemeHome ? props.colors.black : props.colors.white};
-    background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.theme};
-    border: ${(props) =>
-    props.$darkThemeHome ? `1px solid ${props.colors.theme}` : ""};
+    color: ${(props) => (props.$darkThemeHome ? props.colors.black : props.colors.white)};
+    background-color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.theme)};
+    border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.theme}` : "")};
   }
 `;
 
@@ -105,24 +85,30 @@ const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
   };
 
   const deleteSubmission = (_id) => {
-    axios.post(configData.PORT + '/deleteSubmission', {
-      submissionId: _id
-    }, {
-      headers: {
-        "Content-Type": "application/json",
-      }
-    }).then(() => { window.location.reload(false); })
+    axios
+      .post(
+        configData.PORT + "/deleteSubmission",
+        {
+          submissionId: _id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(() => {
+        window.location.reload(false);
+      })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
   return (
     <StyledModal {...props} onHide={onHide} centered>
       <StyledModalHeader {...props} closeButton>
-        <StyledModalTitle {...props}>
-          {props.submission.fileName}
-        </StyledModalTitle>
+        <StyledModalTitle {...props}>{props.submission.fileName}</StyledModalTitle>
       </StyledModalHeader>
       <StyledModalBody {...props}>
         <p>
@@ -136,13 +122,9 @@ const MoreModal = ({ onHide, dispatch, noOfDocuments, ...props }) => {
         <p>
           <span style={{ fontWeight: "bold" }}>Status: </span>
           {props.submission.status.description === "Accepted" ? (
-            <span style={{ color: "green" }}>
-              {props.submission.status.description}
-            </span>
+            <span style={{ color: "green" }}>{props.submission.status.description}</span>
           ) : (
-            <span style={{ color: "red" }}>
-              {props.submission.status.description}
-            </span>
+            <span style={{ color: "red" }}>{props.submission.status.description}</span>
           )}
         </p>
         <p>
@@ -184,9 +166,7 @@ const Submission = (props) => {
       <td>{moment(submission.finished_at).calendar()}</td>
       <td>
         {submission.status.description === "Accepted" ? (
-          <span style={{ color: "green" }}>
-            {submission.status.description}
-          </span>
+          <span style={{ color: "green" }}>{submission.status.description}</span>
         ) : (
           <span style={{ color: "red" }}>{submission.status.description}</span>
         )}
@@ -194,11 +174,7 @@ const Submission = (props) => {
       <td className="more" onClick={() => setShowMoreModal(true)}>
         ...
       </td>
-      <MoreModal
-        show={showMoreModal ? 1 : 0}
-        onHide={() => setShowMoreModal(false)}
-        {...props}
-      />
+      <MoreModal show={showMoreModal ? 1 : 0} onHide={() => setShowMoreModal(false)} {...props} />
     </SubmissionDiv>
   );
 };

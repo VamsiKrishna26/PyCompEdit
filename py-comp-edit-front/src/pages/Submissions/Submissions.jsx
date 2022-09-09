@@ -115,10 +115,9 @@ const StyledTable = styled(Table)`
 `;
 
 const Submissions = (props) => {
-
-  useEffect(()=>{
-    document.title='Submissions - PyCompEdit';
-  },[])
+  useEffect(() => {
+    document.title = "Submissions - PyCompEdit";
+  }, []);
 
   const [searchParams, setSearchParams] = useSearchParams();
 

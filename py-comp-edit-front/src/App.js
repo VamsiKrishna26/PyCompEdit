@@ -45,7 +45,7 @@ const AppDiv = styled.div`
     } */
   }
 
-  .footer{
+  .footer {
     min-height: 50px;
     display: flex;
     align-items: center;
@@ -62,9 +62,9 @@ const AppDiv = styled.div`
 const App = (props) => {
   const { user } = props;
 
-  useEffect(()=>{
-    document.title='PyCompEdit';
-  },[])
+  useEffect(() => {
+    document.title = "PyCompEdit";
+  }, []);
 
   let [darkThemeHome, setDarkThemeHome] = useState(
     JSON.parse(localStorage.getItem("dark_theme_home")) ||
@@ -139,7 +139,7 @@ const App = (props) => {
             path="/discussions/:discussionId"
             element={<Discussion $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} />}
           />
-          
+
           <Route path="/discussions" element={<Discussions $darkThemeHome={darkThemeHome} colors={colors} font={font} font_sizes={font_sizes} {...props} />} />
           {
             <Route
@@ -167,7 +167,10 @@ const App = (props) => {
         </Routes>
       </div>
       <div className="footer">
-        <div className="footer-para">This is project is done as part of the module "CO7201 MSc Individual Project" by "Vamsi Krishna Palaparti, Msc in Advanced Computer Science, University of Leicester."</div>
+        <div className="footer-para">
+          This is project is done as part of the module "CO7201 MSc Individual Project" by "Vamsi Krishna Palaparti, Msc in Advanced Computer Science,
+          University of Leicester."
+        </div>
       </div>
     </AppDiv>
   );

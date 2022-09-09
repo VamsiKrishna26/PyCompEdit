@@ -137,9 +137,9 @@ const StyledDownloadButton = styled(Button)`
 const Editor = (props) => {
   const { $darkThemeHome, user } = props;
 
-  useEffect(()=>{
-    document.title='Editor - PyCompEdit';
-  },[])
+  useEffect(() => {
+    document.title = "Editor - PyCompEdit";
+  }, []);
 
   const location = useLocation();
 

@@ -6,18 +6,13 @@ import { Accordion } from "react-bootstrap";
 
 const SampleProgramsDiv = styled.div`
   border-radius: 15px 15px 15px 15px;
-  border: ${(props) =>
-    props.darkTheme
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
+  border: ${(props) => (props.darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
   padding: 0.5em;
   margin: 0.5em;
   font-family: ${(props) => props.fontFamily};
   font-weight: ${(props) => props.fontWeight};
-  color: ${(props) =>
-    props.darkTheme ? props.colors.white : props.colors.black};
-  background-color: ${(props) =>
-    props.darkTheme ? props.colors.dark : props.colors.white};
+  color: ${(props) => (props.darkTheme ? props.colors.white : props.colors.black)};
+  background-color: ${(props) => (props.darkTheme ? props.colors.dark : props.colors.white)};
   max-height: 550px;
   overflow-y: auto;
   .language {
@@ -35,30 +30,17 @@ const SampleProgramsDiv = styled.div`
     .accordion-body {
       /* border: 1px solid red; */
       padding: 0.5em !important;
-      background-color: ${(props) =>
-        props.darkTheme ? props.colors.dark : props.colors.white} !important;
-      color: ${(props) =>
-        props.darkTheme ? props.colors.white : props.colors.black} !important;
-      border-color: ${(props) =>
-        props.darkTheme
-          ? `${props.colors.black}`
-          : `${props.colors.theme}`} !important;
+      background-color: ${(props) => (props.darkTheme ? props.colors.dark : props.colors.white)} !important;
+      color: ${(props) => (props.darkTheme ? props.colors.white : props.colors.black)} !important;
+      border-color: ${(props) => (props.darkTheme ? `${props.colors.black}` : `${props.colors.theme}`)} !important;
     }
     .accordion-button {
       padding: 0.5em !important;
-      color: ${(props) =>
-        props.darkTheme
-          ? `${props.colors.white}`
-          : `${props.colors.black}`} !important;
-      background-color: ${(props) =>
-        props.darkTheme ? props.colors.dark : props.colors.white} !important;
+      color: ${(props) => (props.darkTheme ? `${props.colors.white}` : `${props.colors.black}`)} !important;
+      background-color: ${(props) => (props.darkTheme ? props.colors.dark : props.colors.white)} !important;
       :not(.collapsed) {
-        background-color: ${(props) =>
-          props.darkTheme ? props.colors.white : props.colors.theme} !important;
-        color: ${(props) =>
-        props.darkTheme
-          ? `${props.colors.black}`
-          : `${props.colors.white}`} !important;
+        background-color: ${(props) => (props.darkTheme ? props.colors.white : props.colors.theme)} !important;
+        color: ${(props) => (props.darkTheme ? `${props.colors.black}` : `${props.colors.white}`)} !important;
       }
     }
     .accordion-item {
@@ -76,17 +58,7 @@ const SampleProgramsDiv = styled.div`
 `;
 
 const SamplePrograms = (props) => {
-  const {
-    fontFamily,
-    fontSize,
-    darkTheme,
-    fontWeight,
-    colors,
-    setLanguage,
-    setFileName,
-    setNotes,
-    setSampleProgram,
-  } = props;
+  const { fontFamily, fontSize, darkTheme, fontWeight, colors, setLanguage, setFileName, setNotes, setSampleProgram } = props;
 
   const [programs, setPrograms] = useState([]);
 
@@ -127,13 +99,7 @@ const SamplePrograms = (props) => {
   };
 
   return (
-    <SampleProgramsDiv
-      fontFamily={fontFamily}
-      fontSize={fontSize}
-      fontWeight={fontWeight}
-      darkTheme={darkTheme}
-      colors={colors}
-    >
+    <SampleProgramsDiv fontFamily={fontFamily} fontSize={fontSize} fontWeight={fontWeight} darkTheme={darkTheme} colors={colors}>
       {programs.length !== 0 ? (
         <div className="programs">
           <p className="language">Sample Programs: (Try them)</p>
@@ -147,10 +113,7 @@ const SamplePrograms = (props) => {
                   <Accordion.Body>
                     {language.programs.map((program, index) => (
                       <div key={`${language.language} ${program.title}`}>
-                        <p
-                          className="title"
-                          onClick={() => setProgram(language.language, program)}
-                        >
+                        <p className="title" onClick={() => setProgram(language.language, program)}>
                           {program.title}
                         </p>
                       </div>

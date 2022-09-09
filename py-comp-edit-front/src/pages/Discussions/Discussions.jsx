@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { BsSearch, BsFillEraserFill } from "react-icons/bs";
 
 const DiscussionsDiv = styled.div`
-padding: 1em;
+  padding: 1em;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -27,22 +27,16 @@ padding: 1em;
     .search {
       flex: 0.8;
       border-radius: 15px 15px 15px 15px;
-      border: ${(props) =>
-        props.$darkThemeHome
-          ? `1px solid ${props.colors.black}`
-          : `1px solid ${props.colors.theme}`};
+      border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
       padding: 1em;
-      background-color: ${(props) =>
-        props.$darkThemeHome ? props.colors.dark : props.colors.white};
+      background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
       font-family: ${(props) => props.font};
-      color: ${(props) =>
-        props.$darkThemeHome ? props.colors.white : props.colors.black};
+      color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
       margin-top: 0.5em;
     }
     .icon {
       flex: 0.1;
-      color: ${(props) =>
-        props.$darkThemeHome ? props.colors.white : props.colors.theme};
+      color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.theme)};
       font-size: larger;
       cursor: pointer;
     }
@@ -64,81 +58,56 @@ padding: 1em;
   }
 
   @media only screen and (max-width: 768px) {
-    .pagination{
+    .pagination {
       margin: 0em;
     }
-    .documents{
+    .documents {
       margin: 0.5em;
     }
   }
 `;
 const StyledDropDownToggle = styled(Dropdown.Toggle)`
   font-family: ${(props) => props.font};
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
-  border: ${(props) =>
-    props.$darkThemeHome
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
+  border: ${(props) => (props.$darkThemeHome ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
   :focus {
     font-family: ${(props) => props.font} !important;
-    color: ${(props) =>
-      props.$darkThemeHome
-        ? props.colors.white
-        : props.colors.black} !important;
-    background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.dark : props.colors.white} !important;
+    color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)} !important;
+    background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)} !important;
   }
   :hover {
-    color: ${(props) =>
-      props.$darkThemeHome ? props.colors.black : props.colors.white};
-    background-color: ${(props) =>
-      props.$darkThemeHome ? props.colors.white : props.colors.theme};
+    color: ${(props) => (props.$darkThemeHome ? props.colors.black : props.colors.white)};
+    background-color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.theme)};
   }
 `;
 
 const StyledDropDownMenu = styled(Dropdown.Menu)`
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
 `;
 const StyledDropDownItem = styled(Dropdown.Item)`
   font-family: ${(props) => props.font};
-  color: ${(props) =>
-    props.$darkThemeHome ? props.colors.white : props.colors.black};
-  background-color: ${(props) =>
-    props.$darkThemeHome ? props.colors.dark : props.colors.white};
+  color: ${(props) => (props.$darkThemeHome ? props.colors.white : props.colors.black)};
+  background-color: ${(props) => (props.$darkThemeHome ? props.colors.dark : props.colors.white)};
 `;
 
 const StyledButton = styled(Button)`
   font-family: ${(props) => props.fontFamily};
-  color: ${(props) =>
-    props.$darkTheme ? props.colors.white : props.colors.black};
-  background-color: ${(props) =>
-    props.$darkTheme ? props.colors.dark : props.colors.white};
+  color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.black)};
+  background-color: ${(props) => (props.$darkTheme ? props.colors.dark : props.colors.white)};
   margin: 0.5em;
-  border: ${(props) =>
-    props.$darkTheme
-      ? `1px solid ${props.colors.black}`
-      : `1px solid ${props.colors.theme}`};
+  border: ${(props) => (props.$darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
   :hover {
-    color: ${(props) =>
-      props.$darkTheme ? props.colors.black : props.colors.white};
-    background-color: ${(props) =>
-      props.$darkTheme ? props.colors.white : props.colors.dark};
-    border: ${(props) =>
-      props.$darkTheme
-        ? `1px solid ${props.colors.theme}`
-        : `1px solid ${props.colors.black}`};
+    color: ${(props) => (props.$darkTheme ? props.colors.black : props.colors.white)};
+    background-color: ${(props) => (props.$darkTheme ? props.colors.white : props.colors.dark)};
+    border: ${(props) => (props.$darkTheme ? `1px solid ${props.colors.theme}` : `1px solid ${props.colors.black}`)};
   }
 `;
 
 const Discussions = (props) => {
-
-  useEffect(()=>{
-    document.title='Discussions - PyCompEdit';
-  },[])
+  useEffect(() => {
+    document.title = "Discussions - PyCompEdit";
+  }, []);
 
   const [sort, setSort] = useState(
     JSON.parse(localStorage.getItem("discussionSort")) || {
@@ -146,13 +115,9 @@ const Discussions = (props) => {
     }
   );
 
-  const [page, setPage] = useState(
-    JSON.parse(localStorage.getItem("discussionPage")) || 1
-  );
+  const [page, setPage] = useState(JSON.parse(localStorage.getItem("discussionPage")) || 1);
 
-  const [noOfDocuments, setNoOfDocuments] = useState(
-    JSON.parse(localStorage.getItem("discussionNoOfDocuments")) || 10
-  );
+  const [noOfDocuments, setNoOfDocuments] = useState(JSON.parse(localStorage.getItem("discussionNoOfDocuments")) || 10);
 
   const [discussions, setDiscussions] = useState([]);
 
@@ -160,9 +125,7 @@ const Discussions = (props) => {
 
   const [pages, setPages] = useState(1);
 
-  const [search, setSearch] = useState(
-    JSON.parse(localStorage.getItem("discussionSearch")) || ""
-  );
+  const [search, setSearch] = useState(JSON.parse(localStorage.getItem("discussionSearch")) || "");
 
   const searchRef = useRef(null);
 
@@ -253,13 +216,7 @@ const Discussions = (props) => {
     let documentsList = [];
     for (var i = 0; i < documents.length; i++) {
       documentsList.push(
-        <StyledDropDownItem
-          $darkThemeHome={props.$darkThemeHome}
-          eventKey={documents[i]}
-          key={documents[i]}
-          colors={props.colors}
-          font={font}
-        >
+        <StyledDropDownItem $darkThemeHome={props.$darkThemeHome} eventKey={documents[i]} key={documents[i]} colors={props.colors} font={font}>
           {documents[i]}
         </StyledDropDownItem>
       );
@@ -268,12 +225,7 @@ const Discussions = (props) => {
   };
 
   return (
-    <DiscussionsDiv
-      colors={colors}
-      font={font}
-      font_sizes={font_sizes}
-      $darkThemeHome={$darkThemeHome}
-    >
+    <DiscussionsDiv colors={colors} font={font} font_sizes={font_sizes} $darkThemeHome={$darkThemeHome}>
       <div className="add-discussion">
         <StyledButton
           fontFamily={font}
@@ -287,24 +239,12 @@ const Discussions = (props) => {
         </StyledButton>
       </div>
       <div className="sort-bar">
-        <SortBar
-          keyprop={key}
-          setKey={setKey}
-          sort={sort}
-          setSort={setSort}
-          {...props}
-        />
+        <SortBar keyprop={key} setKey={setKey} sort={sort} setSort={setSort} {...props} />
       </div>
 
       <div className="search-bar">
         <div className="wrapper">
-          <input
-            className="search"
-            type="text"
-            name="search"
-            placeholder="Search through discussions..."
-            ref={searchRef}
-          />
+          <input className="search" type="text" name="search" placeholder="Search through discussions..." ref={searchRef} />
           <BsSearch
             className="icon"
             onClick={() => {
@@ -320,7 +260,7 @@ const Discussions = (props) => {
           />
         </div>
       </div>
-      
+
       <div className="discussion">
         {discussions.map((item, i) => (
           <Discussion
@@ -338,12 +278,7 @@ const Discussions = (props) => {
         ))}
       </div>
       <div className="pagination">
-        <PaginationComp
-          page={page}
-          pages={pages}
-          setPage={setPage}
-          {...props}
-        />
+        <PaginationComp page={page} pages={pages} setPage={setPage} {...props} />
       </div>
       <div className="documents">
         <Dropdown
@@ -353,14 +288,8 @@ const Discussions = (props) => {
           }}
           className="dropdown"
         >
-          <StyledDropDownToggle
-            $darkThemeHome={$darkThemeHome}
-            colors={colors}
-            font={font}
-          >
-            {window.screen.width >= 768
-              ? `Number of Documents: ${noOfDocuments}`
-              : `${noOfDocuments}`}
+          <StyledDropDownToggle $darkThemeHome={$darkThemeHome} colors={colors} font={font}>
+            {window.screen.width >= 768 ? `Number of Documents: ${noOfDocuments}` : `${noOfDocuments}`}
           </StyledDropDownToggle>
 
           <StyledDropDownMenu $darkThemeHome={$darkThemeHome} colors={colors}>

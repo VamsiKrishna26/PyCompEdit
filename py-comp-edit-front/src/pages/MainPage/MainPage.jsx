@@ -107,16 +107,16 @@ const MainPageDiv = styled.div`
   }
 
   @media only screen and (max-width: 768px) {
-    .first-item{
+    .first-item {
       flex-direction: column;
-      .monitor{
+      .monitor {
         margin-bottom: 0.3em;
       }
     }
-    .item-back{
+    .item-back {
       flex-direction: column;
     }
-    .third-item-back{
+    .third-item-back {
       flex-direction: column;
     }
   }

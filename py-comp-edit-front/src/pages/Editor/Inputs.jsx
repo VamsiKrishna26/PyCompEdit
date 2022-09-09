@@ -3,8 +3,7 @@ import styled from "styled-components";
 
 const InputsDiv = styled.div`
   font-family: ${(props) => props.fontFamily};
-  color: ${(props) =>
-    props.darkTheme ? props.colors.white : props.colors.black};
+  color: ${(props) => (props.darkTheme ? props.colors.white : props.colors.black)};
   .extras {
     display: flex;
     flex-direction: row;
@@ -34,18 +33,13 @@ const InputsDiv = styled.div`
 
   .stdin_file-name {
     border-radius: 15px 15px 15px 15px;
-    border: ${(props) =>
-      props.darkTheme
-        ? `1px solid ${props.colors.black}`
-        : `1px solid ${props.colors.theme}`};
+    border: ${(props) => (props.darkTheme ? `1px solid ${props.colors.black}` : `1px solid ${props.colors.theme}`)};
     padding: 1em;
-    background-color: ${(props) =>
-      props.darkTheme ? props.colors.dark : props.colors.white};
+    background-color: ${(props) => (props.darkTheme ? props.colors.dark : props.colors.white)};
     font-family: ${(props) => props.fontFamily};
     font-size: ${(props) => props.fontSize};
     font-weight: ${(props) => props.fontWeight};
-    color: ${(props) =>
-      props.darkTheme ? props.colors.white : props.colors.black};
+    color: ${(props) => (props.darkTheme ? props.colors.white : props.colors.black)};
     margin: 0.5em;
   }
 
@@ -66,20 +60,7 @@ const InputsDiv = styled.div`
 `;
 
 const Inputs = (props) => {
-  const {
-    fontSize,
-    fontFamily,
-    darkTheme,
-    fontWeight,
-    setStdin,
-    setFileName,
-    setNotes,
-    stdin,
-    fileName,
-    notes,
-    readOnly,
-  } = props;
-
+  const { fontSize, fontFamily, darkTheme, fontWeight, setStdin, setFileName, setNotes, stdin, fileName, notes, readOnly } = props;
 
   const onStdinChange = (e) => {
     setStdin(e.target.value);
@@ -98,13 +79,7 @@ const Inputs = (props) => {
   };
 
   return (
-    <InputsDiv
-      fontFamily={fontFamily}
-      fontSize={fontSize}
-      fontWeight={fontWeight}
-      darkTheme={darkTheme}
-      colors={props.colors}
-    >
+    <InputsDiv fontFamily={fontFamily} fontSize={fontSize} fontWeight={fontWeight} darkTheme={darkTheme} colors={props.colors}>
       <div className="extras">
         <div className="file_name-stdin">
           <label>File Name:</label>
