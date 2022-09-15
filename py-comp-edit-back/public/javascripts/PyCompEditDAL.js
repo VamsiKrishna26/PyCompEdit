@@ -40,7 +40,7 @@ PyCompEditDAL.submit = async function (userId, fileName, notes, source_code, std
         },
         headers: {
           "Content-Type": "application/json",
-          "X-RapidAPI-Key": "ae615435a2msh56d6b3d25e5d1c6p11491ajsnbefe4ccd3acb",
+          "X-RapidAPI-Key": <API_Key>,
           "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
         },
         data: '{"language_id":' + language_select[language] + ',"source_code":"' + source_code + '","stdin":"' + stdin + '"}',
@@ -57,7 +57,7 @@ PyCompEditDAL.submit = async function (userId, fileName, notes, source_code, std
             fields: "*",
           },
           headers: {
-            "X-RapidAPI-Key": "ae615435a2msh56d6b3d25e5d1c6p11491ajsnbefe4ccd3acb",
+            "X-RapidAPI-Key": <API_Key>,
             "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
           },
         })
